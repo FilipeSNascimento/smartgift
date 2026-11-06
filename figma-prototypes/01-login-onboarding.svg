@@ -1,0 +1,133 @@
+<svg width="393" height="852" viewBox="0 0 393 852" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="393" y2="852" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="45%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="345" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="btnGreen" x1="0" y1="0" x2="0" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="btnPurple" x1="0" y1="0" x2="0" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="btnGold" x1="0" y1="0" x2="0" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- LAYER: Screen Background -->
+  <g id="01-Tela-Login-Onboarding">
+    <rect id="Background" width="393" height="852" rx="36" fill="url(#bgGrad)"/>
+
+    <!-- LAYER: Status Bar -->
+    <g id="Status-Bar">
+      <text x="32" y="32" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="700">09:41</text>
+      <rect x="136" y="14" width="120" height="24" rx="12" fill="#050811"/>
+      <text x="315" y="32" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="700">5G 100%</text>
+    </g>
+
+    <!-- LAYER: Brand Hero Card -->
+    <g id="Hero-Brand-Header" transform="translate(24, 58)">
+      <rect id="Hero-Card-Bg" width="345" height="156" rx="24" fill="url(#brandGrad)"/>
+      <rect x="128" y="16" width="88" height="24" rx="12" fill="#0F172A" fill-opacity="0.45"/>
+      <text x="172" y="32" text-anchor="middle" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="800">100% SEM SPOILER</text>
+
+      <rect id="App-Icon-Box" x="144" y="48" width="56" height="56" rx="18" fill="#0F172A" stroke="#FEF08A" stroke-width="2"/>
+      <text x="172" y="85" text-anchor="middle" font-size="28">🎁</text>
+
+      <text id="Brand-Title" x="172" y="126" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="24" font-weight="800">SmartGift</text>
+      <text id="Brand-Subtitle" x="172" y="145" text-anchor="middle" fill="#FEF9C3" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="600">Deck de Desejos • Clãs • Menor Preço Real</text>
+    </g>
+
+    <!-- LAYER: Login Form Card -->
+    <g id="Login-Form-Container" transform="translate(24, 232)">
+      <rect id="Form-Card-Bg" width="345" height="330" rx="22" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+
+      <!-- Segmented Switch: Entrar vs Criar Conta -->
+      <g id="Auth-Mode-Tabs" transform="translate(16, 16)">
+        <rect width="313" height="40" rx="12" fill="#0F172A"/>
+        <rect x="4" y="4" width="152" height="32" rx="9" fill="#7C3AED"/>
+        <text x="80" y="25" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="800">Entrar na Conta</text>
+        <text x="233" y="25" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="700">Criar Conta Grátis</text>
+      </g>
+
+      <!-- Input: Email -->
+      <g id="Input-Email" transform="translate(16, 72)">
+        <text x="4" y="14" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="700">SEU E-MAIL OU @USUÁRIO</text>
+        <rect x="0" y="22" width="313" height="44" rx="12" fill="#0F172A" stroke="#475569" stroke-width="1.5"/>
+        <text x="14" y="49" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="500">filipe@smartgift.app</text>
+      </g>
+
+      <!-- Input: Password -->
+      <g id="Input-Password" transform="translate(16, 150)">
+        <text x="4" y="14" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="700">SUA SENHA</text>
+        <rect x="0" y="22" width="313" height="44" rx="12" fill="#0F172A" stroke="#475569" stroke-width="1.5"/>
+        <text x="14" y="49" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="700">••••••••••••</text>
+      </g>
+
+      <!-- CTA Button 3D Clash Style -->
+      <g id="Button-Primary-Login" transform="translate(16, 232)">
+        <rect x="0" y="4" width="313" height="48" rx="14" fill="#047857"/>
+        <rect x="0" y="0" width="313" height="48" rx="14" fill="url(#btnGreen)"/>
+        <text x="156" y="29" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="14" font-weight="900">⚡ ENTRAR NA ARENA DE PRESENTES</text>
+      </g>
+
+      <text x="172" y="308" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600">Sincronizado com Supabase Auth &amp; Cloud</text>
+    </g>
+
+    <!-- LAYER: Join Clan by Invite Code Card -->
+    <g id="Join-Clan-By-Code-Card" transform="translate(24, 578)">
+      <rect width="345" height="122" rx="20" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="18" y="28" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800">🏰 Recebeu um Código de Clã no WhatsApp?</text>
+      <text x="18" y="46" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="500">Entre direto na família ou amigo secreto com o código:</text>
+
+      <g id="Invite-Code-Row" transform="translate(18, 60)">
+        <rect width="196" height="44" rx="12" fill="#0F172A" stroke="#475569" stroke-width="1.5"/>
+        <text x="14" y="27" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800">#FAMILIA-NASC</text>
+
+        <rect x="206" y="4" width="103" height="40" rx="12" fill="#92400E"/>
+        <rect x="206" y="0" width="103" height="40" rx="12" fill="url(#btnGold)"/>
+        <text x="257" y="25" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="900">ENTRAR ⚔️</text>
+      </g>
+    </g>
+
+    <!-- LAYER: Quick Profile Switcher -->
+    <g id="Quick-Account-Switcher" transform="translate(24, 716)">
+      <rect width="345" height="104" rx="20" fill="#131C31" stroke="#334155" stroke-width="1"/>
+      <text x="18" y="24" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="800">TROCA RÁPIDA DE PERFIL (MULTICONTA)</text>
+
+      <g id="Account-Pill-1" transform="translate(16, 36)">
+        <rect width="74" height="54" rx="12" fill="#1E293B" stroke="#7C3AED" stroke-width="2"/>
+        <text x="37" y="26" text-anchor="middle" font-size="18">🧑‍💻</text>
+        <text x="37" y="44" text-anchor="middle" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Filipe</text>
+      </g>
+
+      <g id="Account-Pill-2" transform="translate(98, 36)">
+        <rect width="74" height="54" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+        <text x="37" y="26" text-anchor="middle" font-size="18">👩‍🦱</text>
+        <text x="37" y="44" text-anchor="middle" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Helena</text>
+      </g>
+
+      <g id="Account-Pill-3" transform="translate(180, 36)">
+        <rect width="74" height="54" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+        <text x="37" y="26" text-anchor="middle" font-size="18">👩‍💻</text>
+        <text x="37" y="44" text-anchor="middle" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Letícia</text>
+      </g>
+
+      <g id="Account-Pill-4" transform="translate(262, 36)">
+        <rect width="67" height="54" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+        <text x="33" y="26" text-anchor="middle" font-size="18">🧔</text>
+        <text x="33" y="44" text-anchor="middle" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Lucas</text>
+      </g>
+    </g>
+  </g>
+</svg>
