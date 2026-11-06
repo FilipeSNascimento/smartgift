@@ -41,6 +41,20 @@
 
       <!-- AÇÕES RÁPIDAS + SELETOR DE CONTA LOGADA -->
       <div class="hud-right-actions">
+        <button
+          type="button"
+          class="hud-db-pill"
+          [class.online]="giftService.supabaseDb.isConnected()"
+          (click)="setTab('settings')"
+          title="Banco Relacional Supabase (sa-east-1) Conectado na 3FN">
+          <span class="db-dot"></span>
+          <span>🗄️ Supabase 3FN ({{ giftService.supabaseDb.totalRowsCount() }} reg.)</span>
+        </button>
+
+        <button type="button" class="clash-3d-btn green sm" (click)="installPwaApp()">
+          📲 {{ isPwaInstalled() ? 'App Instalado' : 'Baixar App' }}
+        </button>
+
         <button type="button" class="clash-3d-btn gold sm" (click)="setTab('deck')">
           ⚡ + Forjar Carta
         </button>
@@ -81,7 +95,7 @@
         🔍 Arena Caça-Preços (Ao Vivo)
       </button>
       <button type="button" class="d-tab" [class.active]="activeTab() === 'settings'" (click)="setTab('settings')">
-        ⚙️ Perfil, Afiliados & Figma
+        📲 App, Banco 3FN & Perfil
       </button>
     </nav>
   </header>
@@ -123,7 +137,6 @@
     <!-- ABA 1: FEED SOCIAL & STORIES (ESTILO INSTAGRAM + CLASH ROYALE)        -->
     <!-- ===================================================================== -->
     @if (activeTab() === 'feed') {
-      <!-- FAIXA DE STORIES HORIZONTAL -->
       <section class="insta-stories-bar">
         @for (st of stories; track st.id) {
           <button type="button" class="story-bubble" (click)="openStory(st)">
@@ -136,7 +149,6 @@
         }
       </section>
 
-      <!-- FILTRO RÁPIDO DE AMIGOS DO FEED -->
       <section class="feed-filter-strip">
         <div class="filter-chips-scroll">
           <button
@@ -164,11 +176,9 @@
         </button>
       </section>
 
-      <!-- GRADE / FEED DE PRESENTES DOS AMIGOS -->
       <section class="social-feed-grid">
         @for (item of giftService.friendsWishlist(); track item.id) {
           <article class="insta-wish-post" [attr.data-rarity]="item.priority">
-            <!-- Header do Post -->
             <div class="post-top-bar">
               <div class="post-author">
                 <span class="author-avatar">{{ item.ownerAvatar || '🎁' }}</span>
@@ -182,7 +192,6 @@
               </span>
             </div>
 
-            <!-- Imagem do Produto + Adesivo de Menor Preço -->
             <div class="post-media-box">
               <img [src]="item.imageUrl" [alt]="item.title" class="post-img" />
               <div class="price-floating-badge">
@@ -192,7 +201,6 @@
               </div>
             </div>
 
-            <!-- Corpo do Post -->
             <div class="post-content">
               <div class="post-meta-row">
                 <span class="history-label">{{ item.priceHistoryLabel }}</span>
@@ -206,7 +214,6 @@
                 💬 <strong>Dica de {{ item.ownerName }}:</strong> "{{ item.notesFromOwner }}"
               </p>
 
-              <!-- Botão de comprar na loja mais barata (com tag de afiliado) + Ver comparativo -->
               <div class="post-store-bar">
                 <a
                   [href]="item.offers[0].url || item.originalUrl"
@@ -243,7 +250,6 @@
                 </div>
               }
 
-              <!-- ÁREA DE COORDENAÇÃO SECRETA (VAQUINHA + RESERVA + CHAT) -->
               <div class="clash-secret-coordination">
                 <div class="secret-head">
                   <span>🤫 Coordenação Secreta ({{ item.ownerName }} não vê isso!)</span>
@@ -252,7 +258,6 @@
                   </span>
                 </div>
 
-                <!-- Barra de Doação estilo Clash Royale -->
                 <div class="clash-donation-progress">
                   <div class="don-labels">
                     <span>🪙 Vaquinha do Clã</span>
@@ -271,7 +276,6 @@
                   </div>
                 }
 
-                <!-- Botões 3D de Reserva e Doação -->
                 <div class="secret-cta-grid">
                   <button
                     type="button"
@@ -305,7 +309,6 @@
                   </button>
                 </div>
 
-                <!-- Chat Secreto entre Amigos -->
                 <div class="secret-chat-box">
                   @for (cm of item.secretComments; track cm.id) {
                     <div class="chat-msg">
@@ -349,7 +352,6 @@
           </div>
         </div>
 
-        <!-- Sugestões Rápidas para Busca Real -->
         <div class="quick-chips-row">
           <span class="chips-label">Buscar ao vivo com 1 clique:</span>
           @for (chip of quickSearchChips; track chip) {
@@ -402,7 +404,6 @@
           </div>
         </div>
 
-        <!-- RESULTADOS REAIS DA API DO MERCADO LIVRE PARA ESCOLHER -->
         @if (forgeLiveResults().length > 0) {
           <div class="live-candidates-box">
             <div class="candidates-head">
@@ -428,7 +429,6 @@
         }
       </section>
 
-      <!-- COLEÇÃO DE CARTAS DO USUÁRIO LOGADO -->
       <section class="my-deck-section">
         <div class="deck-title-bar">
           <h3 class="brand-font">
@@ -513,7 +513,6 @@
     @if (activeTab() === 'clans') {
       @let clan = giftService.activeClan();
 
-      <!-- BARRA SUPERIOR DE CLÃS + ENTRAR COM CÓDIGO -->
       <section class="clans-top-controls">
         <div class="clan-pills-row">
           @for (c of giftService.clans(); track c.id) {
@@ -535,7 +534,6 @@
           </button>
         </div>
 
-        <!-- Entrar em Clã com Código -->
         <div class="join-code-bar">
           <input
             type="text"
@@ -550,7 +548,6 @@
       </section>
 
       <div class="clan-dashboard-grid">
-        <!-- COLUNA ESQUERDA: BANNER DO CLÃ + BAÚ LENDÁRIO + MEMBROS -->
         <div class="clan-left-column">
           <div class="clan-hero-card">
             <div class="clan-crest-box">{{ clan.crestIcon }}</div>
@@ -566,7 +563,6 @@
             </div>
           </div>
 
-          <!-- BAÚ LENDÁRIO DE AMIGO SECRETO -->
           <div class="legendary-chest-box" (click)="revealMySecretFriend.set(!revealMySecretFriend())">
             <div class="chest-visual">{{ revealMySecretFriend() ? '🎉' : '🧰' }}</div>
             <div class="chest-text">
@@ -594,7 +590,6 @@
             </div>
           </div>
 
-          <!-- MEMBROS DO CLÃ -->
           <div class="clan-panel-card">
             <div class="panel-head">
               <h3 class="brand-font">👥 Membros do Clã ({{ clan.members.length }})</h3>
@@ -617,7 +612,6 @@
             </div>
           </div>
 
-          <!-- CALENDÁRIO DE EVENTOS DO CLÃ -->
           <div class="clan-panel-card">
             <div class="panel-head">
               <h3 class="brand-font">📅 Próximos Aniversários & Eventos</h3>
@@ -645,7 +639,6 @@
           </div>
         </div>
 
-        <!-- COLUNA DIREITA: MURAL DE DOAÇÃO DE VAQUINHAS (ESTILO CLASH ROYALE) -->
         <div class="clan-right-column">
           <div class="clan-panel-card">
             <div class="panel-head">
@@ -774,48 +767,136 @@
     }
 
     <!-- ===================================================================== -->
-    <!-- ABA 5: PERFIL, MONETIZAÇÃO DE AFILIADOS, TEMAS & PROTÓTIPOS FIGMA     -->
+    <!-- ABA 5: DOWNLOAD DO APP, BANCO RELACIONAL SUPABASE (3FN) & PERFIL      -->
     <!-- ===================================================================== -->
     @if (activeTab() === 'settings') {
       <div class="settings-grid">
-        <!-- PAINEL 1: PROTÓTIPOS EDITÁVEIS NO FIGMA -->
+        <!-- PAINEL 1: CENTRAL DE DOWNLOAD E INSTALAÇÃO REAL DO APLICATIVO -->
         <section class="settings-card figma-highlight-card">
           <div class="figma-top-row">
             <div>
-              <span class="pill-tag">🎨 PROTÓTIPOS EM CAMADAS EDITÁVEIS NO FIGMA</span>
-              <h2 class="brand-font">Protótipos de Tela do SmartGift no Figma</h2>
+              <span class="pill-tag">📲 APLICATIVO INSTALÁVEL (CELULAR ANDROID / IPHONE / WINDOWS PC)</span>
+              <h2 class="brand-font">Baixar e Instalar o SmartGift para Testar de Verdade</h2>
               <p>
-                Criamos o arquivo oficial no seu time do Figma (<strong>Filipe Nascimento's team</strong>) e as 5 telas em camadas vetoriais editáveis.
-                Clique em <strong>"📋 Copiar Camadas SVG"</strong> em qualquer tela abaixo e aperte <code>Ctrl + V</code> dentro do seu arquivo do Figma para colar todas as camadas editáveis!
+                O SmartGift agora possui <strong>PWA Instalável Nativo</strong> (`manifest.webmanifest` + Service Worker),
+                <strong>Inicializador Standalone para Windows</strong> (`Abrir_SmartGift_App.bat`) e <strong>Compilador Automático de APK Android</strong> no GitHub Actions!
               </p>
             </div>
-            <a [href]="figmaFileUrl" target="_blank" rel="noopener" class="clash-3d-btn green">
-              📐 Abrir Meu Arquivo no Figma ↗
-            </a>
+            <button type="button" class="clash-3d-btn green lg" (click)="installPwaApp()">
+              📲 {{ canInstallPwa() ? 'Instalar Aplicativo Agora (1 Clique)' : 'Como Instalar no Celular / PC' }}
+            </button>
           </div>
 
           <div class="figma-screens-strip">
-            @for (fp of figmaPrototypes; track fp.id) {
-              <div class="figma-proto-item">
-                <div class="fp-head">
-                  <span class="fp-num">TELA {{ fp.number }}</span>
-                  <strong>{{ fp.title }}</strong>
-                  <small>{{ fp.subtitle }}</small>
+            <div class="figma-proto-item">
+              <div class="fp-head">
+                <span class="fp-num">OPÇÃO 01 • INSTALAÇÃO DIRETA (PWA)</span>
+                <strong>📱 Instalar no Android, iPhone ou PC</strong>
+                <small>Funciona como app nativo em tela cheia, ícone na tela inicial e sem barra de navegador.</small>
+              </div>
+              <div class="fp-actions">
+                <button type="button" class="clash-3d-btn green sm" (click)="installPwaApp()">
+                  📲 Instalar App Nativo (PWA)
+                </button>
+              </div>
+            </div>
+
+            <div class="figma-proto-item">
+              <div class="fp-head">
+                <span class="fp-num">OPÇÃO 02 • WINDOWS STANDALONE</span>
+                <strong>💻 Abrir_SmartGift_App.bat (Na Raiz do Projeto)</strong>
+                <small>Dê 2 cliques no arquivo `Abrir_SmartGift_App.bat` na pasta do projeto para abrir em janela dedicada de aplicativo mobile.</small>
+              </div>
+              <div class="fp-actions">
+                <button type="button" class="clash-3d-btn purple sm" (click)="showInstallModal.set(true)">
+                  📖 Ver Passo a Passo PC/Mobile
+                </button>
+              </div>
+            </div>
+
+            <div class="figma-proto-item">
+              <div class="fp-head">
+                <span class="fp-num">OPÇÃO 03 • PACOTE ANDROID (.APK)</span>
+                <strong>🤖 Download do APK Android (Flutter Cloud Build)</strong>
+                <small>Compilado automaticamente na nuvem via GitHub Actions (`.github/workflows/build-android-apk.yml`).</small>
+              </div>
+              <div class="fp-actions">
+                <a [href]="githubApkActionsUrl" target="_blank" rel="noopener" class="clash-3d-btn gold sm">
+                  ⬇️ Baixar .APK no GitHub Actions ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAINEL 2: BANCO DE DADOS RELACIONAL SUPABASE (3FN + RLS SEM SPOILER) -->
+        <section class="settings-card figma-highlight-card db-explorer-card">
+          <div class="figma-top-row">
+            <div>
+              <span class="pill-tag">🗄️ POSTGRESQL EM NUVEM • SUPABASE (SA-EAST-1 SÃO PAULO) • 3ª FORMA NORMAL (3FN)</span>
+              <h2 class="brand-font">Arquitetura do Banco de Dados Relacional (`wycooetrpwcgfdnhifcb`)</h2>
+              <p>
+                Banco de dados PostgreSQL real provisionado e populado na região <strong>Sul da América (`sa-east-1` - São Paulo)</strong> com
+                <strong>12 tabelas normalizadas na 3FN</strong>, chaves estrangeiras (`ON DELETE CASCADE`) e políticas <strong>Row-Level Security (RLS)</strong>
+                que garantem a regra <strong>100% Sem Spoiler</strong> direto na camada de banco!
+              </p>
+            </div>
+            <div class="db-header-actions">
+              <button
+                type="button"
+                class="clash-3d-btn purple"
+                [disabled]="giftService.supabaseDb.isSyncing()"
+                (click)="refreshDatabaseStats()">
+                {{ giftService.supabaseDb.isSyncing() ? '⏳ Sincronizando...' : '🔄 Sincronizar Contagem Real' }}
+              </button>
+              <a [href]="supabaseDashboardUrl" target="_blank" rel="noopener" class="clash-3d-btn gold">
+                🗄️ Abrir Table Editor no Supabase ↗
+              </a>
+            </div>
+          </div>
+
+          <div class="db-status-banner">
+            <div class="db-stat-box">
+              <small>STATUS DA CONEXÃO</small>
+              <strong class="db-online-text">
+                {{ giftService.supabaseDb.isConnected() ? '🟢 CONECTADO AO VIVO (REST + RLS)' : '🟡 MODO LOCAL + CACHE' }}
+              </strong>
+            </div>
+            <div class="db-stat-box">
+              <small>PROJETO & REGIÃO</small>
+              <strong>{{ giftService.supabaseDb.projectRef }} ({{ giftService.supabaseDb.region }})</strong>
+            </div>
+            <div class="db-stat-box">
+              <small>TABELAS RELACIONAIS (3FN)</small>
+              <strong>12 Tabelas + Políticas RLS</strong>
+            </div>
+            <div class="db-stat-box">
+              <small>TOTAL DE REGISTROS ATIVOS</small>
+              <strong>{{ giftService.supabaseDb.totalRowsCount() }} linhas no PostgreSQL ({{ giftService.supabaseDb.lastSyncAt() }})</strong>
+            </div>
+          </div>
+
+          <div class="db-tables-grid">
+            @for (tb of giftService.supabaseDb.tableStats(); track tb.tableName) {
+              <div class="db-table-card" [class.anti-spoiler]="tb.category === 'Blindagem Sem Spoiler'">
+                <div class="db-tb-top">
+                  <span class="db-cat-badge" [class.spoiler-badge]="tb.category === 'Blindagem Sem Spoiler'">
+                    {{ tb.category === 'Blindagem Sem Spoiler' ? '🛡️ ' + tb.category : '📦 ' + tb.category }}
+                  </span>
+                  <span class="db-row-count">{{ tb.rowCount }} reg.</span>
                 </div>
-                <div class="fp-actions">
-                  <button type="button" class="clash-3d-btn purple sm" (click)="copyFigmaSvgToClipboard(fp)">
-                    📋 Copiar Camadas p/ Colar no Figma (Ctrl+V)
-                  </button>
-                  <a [href]="'/figma-prototypes/' + fp.fileName" [download]="fp.fileName" class="btn-compare-stores">
-                    ⬇ Baixar .SVG
-                  </a>
+                <strong class="db-tb-name">public.{{ tb.tableName }}</strong>
+                <small class="db-pk-fk">{{ tb.pkFkSummary }}</small>
+                <p class="db-tb-desc">{{ tb.description }}</p>
+                <div class="db-rls-pill">
+                  <span>🔒 RLS:</span> {{ tb.rlsRule }}
                 </div>
               </div>
             }
           </div>
         </section>
 
-        <!-- PAINEL 2: CONFIGURAÇÃO DE MONETIZAÇÃO (LINKS DE AFILIADO) -->
+        <!-- PAINEL 3: CONFIGURAÇÃO DE MONETIZAÇÃO (LINKS DE AFILIADO) -->
         <section class="settings-card">
           <span class="pill-tag">💰 MONETIZAÇÃO AUTOMÁTICA</span>
           <h3 class="brand-font">Seus IDs de Afiliado nas Lojas</h3>
@@ -845,7 +926,7 @@
           </div>
         </section>
 
-        <!-- PAINEL 3: TEMAS ADAPTÁVEIS & PERFIL -->
+        <!-- PAINEL 4: TEMAS ADAPTÁVEIS & PERFIL -->
         <section class="settings-card">
           <span class="pill-tag">🎨 IDENTIDADE VISUAL & CONTA</span>
           <h3 class="brand-font">Temas Adaptáveis & Perfil</h3>
@@ -904,10 +985,68 @@
       <span class="d-lbl">Preços</span>
     </button>
     <button type="button" class="dock-tab" [class.active]="activeTab() === 'settings'" (click)="setTab('settings')">
-      <span class="d-ico">⚙️</span>
-      <span class="d-lbl">Figma/Perfil</span>
+      <span class="d-ico">📲</span>
+      <span class="d-lbl">App/Banco</span>
     </button>
   </nav>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE INSTRUÇÕES DE INSTALAÇÃO DO APP (ANDROID / IPHONE / WINDOWS)   -->
+  <!-- ======================================================================= -->
+  @if (showInstallModal()) {
+    <div class="modal-overlay" (click)="showInstallModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-top">
+          <h3 class="brand-font">📲 Instalar o Aplicativo SmartGift</h3>
+          <button type="button" class="story-close-btn" (click)="showInstallModal.set(false)">✕</button>
+        </div>
+
+        <div class="install-steps-list">
+          <div class="install-step-item">
+            <span class="inst-icon">💻</span>
+            <div>
+              <strong>No Windows / PC (Janela de Aplicativo Nativo)</strong>
+              <p>
+                Clique no ícone de <strong>Instalar SmartGift (📥)</strong> no canto direito da barra de endereços do Chrome/Edge,
+                ou dê dois cliques no arquivo <code>Abrir_SmartGift_App.bat</code> na pasta raiz do projeto!
+              </p>
+            </div>
+          </div>
+
+          <div class="install-step-item">
+            <span class="inst-icon">🤖</span>
+            <div>
+              <strong>No Celular Android (PWA ou Arquivo .APK)</strong>
+              <p>
+                No Chrome do Android, toque em <strong>"⋮" → "Instalar aplicativo"</strong>, ou baixe o instalador
+                <code>smartgift-android.apk</code> compilado automaticamente na aba <strong>Actions</strong> do seu repositório GitHub.
+              </p>
+            </div>
+          </div>
+
+          <div class="install-step-item">
+            <span class="inst-icon">🍎</span>
+            <div>
+              <strong>No iPhone / iOS (Safari)</strong>
+              <p>
+                Abra no Safari, toque no botão <strong>Compartilhar (⬆️)</strong> na barra inferior e escolha
+                <strong>"Adicionar à Tela de Início"</strong> para usar em tela cheia como app nativo.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions-row">
+          <a [href]="githubApkActionsUrl" target="_blank" rel="noopener" class="clash-3d-btn gold">
+            ⬇️ Abrir Builds do .APK no GitHub ↗
+          </a>
+          <button type="button" class="clash-3d-btn green" (click)="showInstallModal.set(false)">
+            ✅ Entendi
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- ======================================================================= -->
   <!-- MODAL DE AUTENTICAÇÃO / TROCA DE CONTA / CADASTRO                       -->
