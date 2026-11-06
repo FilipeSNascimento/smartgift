@@ -18,14 +18,6 @@ export interface StoryItem {
   memberFilter?: string;
 }
 
-export interface FigmaScreenProto {
-  id: string;
-  number: string;
-  title: string;
-  subtitle: string;
-  fileName: string;
-}
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -41,7 +33,6 @@ export class AppComponent implements OnInit {
   readonly activeStory = signal<StoryItem | null>(null);
   readonly toastMessage = signal<string | null>(null);
 
-  // Modal de Login / Troca de Conta / Cadastro
   readonly showAuthModal = signal<boolean>(false);
   readonly authModalMode = signal<'switch' | 'register' | 'edit'>('switch');
   regName = '';
@@ -49,7 +40,6 @@ export class AppComponent implements OnInit {
   regAvatar = '🎁';
   regBirthday = '';
 
-  // Forjador de Carta (Extrator de Link + Busca Real Mercado Livre)
   forgeInput = '';
   forgeCustomTitle = '';
   forgeNotes = '';
@@ -57,24 +47,20 @@ export class AppComponent implements OnInit {
   readonly isSearchingForge = signal<boolean>(false);
   readonly forgeLiveResults = signal<LiveSearchResult[]>([]);
 
-  // Modal de Edição de Carta do Deck
   readonly editingItem = signal<WishItem | null>(null);
   editTitle = '';
   editNotes = '';
   editPriority: 'alta' | 'media' | 'sonho' = 'alta';
 
-  // Arena Caça-Preços em Tempo Real
   arenaQuery = 'PlayStation 5 Slim';
   readonly isSearchingArena = signal<boolean>(false);
   readonly arenaResults = signal<LiveSearchResult[]>([]);
 
-  // Controles de Cards (Comparativo expandido, doação customizada, comentários)
   readonly expandedOffersMap = signal<Record<string, boolean>>({});
   readonly refreshingItemId = signal<string | null>(null);
   customContributionAmount: Record<string, number> = {};
   newCommentText: Record<string, string> = {};
 
-  // Clãs: Entrar por Código, Criar Clã, Novo Evento, Baú Secreto
   inviteCodeInput = '';
   readonly showCreateClanModal = signal<boolean>(false);
   newClanName = '';
@@ -91,52 +77,18 @@ export class AppComponent implements OnInit {
   readonly revealMySecretFriend = signal<boolean>(false);
   readonly applyClanThemeAutomatically = signal<boolean>(true);
 
-  // Configurações de Afiliado
   affAmazon = '';
   affMercadoLivre = '';
   affShopee = '';
   affMagalu = '';
   affKabum = '';
 
-  readonly figmaFileUrl = 'https://www.figma.com/design/NMXEihmjSrwSjZKxoPCzyR';
-
-  readonly figmaPrototypes: FigmaScreenProto[] = [
-    {
-      id: 'fp-1',
-      number: '01',
-      title: 'Login, Código de Clã & Multicontas',
-      subtitle: 'Entrada rápida, convite #FAMILIA-NASC e troca de perfil',
-      fileName: '01-login-onboarding.svg'
-    },
-    {
-      id: 'fp-2',
-      number: '02',
-      title: 'Feed Social & Stories (Instagram)',
-      subtitle: 'Top HUD Clash Royale + Stories de aniversários + Feed c/ Vaquinha',
-      fileName: '02-feed-instagram-stories.svg'
-    },
-    {
-      id: 'fp-3',
-      number: '03',
-      title: 'Meu Deck 2x2 & Forjar Carta (Clash)',
-      subtitle: 'Cartas Lendária/Épica/Rara + Extrator e Busca Real',
-      fileName: '03-meu-deck-forjar-carta.svg'
-    },
-    {
-      id: 'fp-4',
-      number: '04',
-      title: 'Clã, Mural de Doação & Baú Secreto',
-      subtitle: 'Pedidos de vaquinha estilo doação de cartas + Baú Lendário',
-      fileName: '04-cla-vaquinha-bau-secreto.svg'
-    },
-    {
-      id: 'fp-5',
-      number: '05',
-      title: 'Arena Caça-Preços & Monetização',
-      subtitle: 'Comparativo ao vivo Mercado Livre/Amazon/KaBuM + Tags Afiliado',
-      fileName: '05-arena-precos-afiliados.svg'
-    }
-  ];
+  private deferredInstallPrompt: any = null;
+  readonly canInstallPwa = signal<boolean>(false);
+  readonly isPwaInstalled = signal<boolean>(false);
+  readonly showInstallModal = signal<boolean>(false);
+  readonly githubApkActionsUrl = 'https://github.com/FilipeSNascimento/smartgift/actions';
+  readonly supabaseDashboardUrl = 'https://supabase.com/dashboard/project/wycooetrpwcgfdnhifcb/editor';
 
   readonly availableAvatars = ['🧑‍💻', '👩‍🦱', '👩‍💻', '🧔', '👰', '🕶️', '🎨', '🦸‍♂️', '👑', '🎮'];
   readonly availableCrests = ['🦁', '🚀', '🛡️', '👑', '🐉', '🥂', '🎮', '🌟'];
@@ -207,7 +159,26 @@ export class AppComponent implements OnInit {
     this.affShopee = aff.shopeeAffiliateId;
     this.affMagalu = aff.magaluPartnerId;
     this.affKabum = aff.kabumAffiliateTag;
+    this.setupPwaInstallListeners();
     void this.runArenaSearch();
+  }
+
+  private setupPwaInstallListeners(): void {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia?.('(display-mode: standalone)').matches) {
+      this.isPwaInstalled.set(true);
+    }
+    window.addEventListener('beforeinstallprompt', (e: Event) => {
+      e.preventDefault();
+      this.deferredInstallPrompt = e;
+      this.canInstallPwa.set(true);
+    });
+    window.addEventListener('appinstalled', () => {
+      this.isPwaInstalled.set(true);
+      this.canInstallPwa.set(false);
+      this.deferredInstallPrompt = null;
+      this.showToast('📲 Aplicativo SmartGift instalado com sucesso no seu dispositivo!');
+    });
   }
 
   setTab(tab: ProductTab): void {
@@ -237,9 +208,6 @@ export class AppComponent implements OnInit {
     return '💎 RARA';
   }
 
-  // ===========================================================================
-  // AUTENTICAÇÃO & TROCA RÁPIDA DE CONTA
-  // ===========================================================================
   openAccountModal(mode: 'switch' | 'register' | 'edit' = 'switch'): void {
     this.authModalMode.set(mode);
     if (mode === 'edit') {
@@ -281,9 +249,6 @@ export class AppComponent implements OnInit {
     this.showAuthModal.set(false);
   }
 
-  // ===========================================================================
-  // FORJAR CARTA & BUSCA REAL DE PREÇOS (MERCADO LIVRE API)
-  // ===========================================================================
   async searchForgeCandidates(chipQuery?: string): Promise<void> {
     if (chipQuery) {
       this.forgeInput = chipQuery;
@@ -365,9 +330,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // ===========================================================================
-  // ARENA CAÇA-PREÇOS AO VIVO
-  // ===========================================================================
   async runArenaSearch(chip?: string): Promise<void> {
     if (chip) {
       this.arenaQuery = chip;
@@ -388,9 +350,6 @@ export class AppComponent implements OnInit {
     this.setTab('deck');
   }
 
-  // ===========================================================================
-  // INTERAÇÕES SOCIAIS (RESERVA SECRETA, VAQUINHA, CHAT SECRETO)
-  // ===========================================================================
   toggleOffers(itemId: string): void {
     this.expandedOffersMap.update(m => ({ ...m, [itemId]: !m[itemId] }));
   }
@@ -424,9 +383,6 @@ export class AppComponent implements OnInit {
     return Math.min(100, Math.round((item.secretPool.collectedAmount / item.secretPool.targetAmount) * 100));
   }
 
-  // ===========================================================================
-  // CLÃS, CÓDIGO DE CONVITE E BAÚ DE AMIGO SECRETO
-  // ===========================================================================
   selectClan(clanId: string): void {
     this.giftService.selectedClanId.set(clanId);
     this.revealMySecretFriend.set(false);
@@ -495,9 +451,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // ===========================================================================
-  // AFILIADOS & EXPORTAÇÃO DE CAMADAS PARA O FIGMA
-  // ===========================================================================
   saveAffiliateConfig(): void {
     this.giftService.updateAffiliateConfig({
       amazonTag: this.affAmazon.trim() || 'smartgift-20',
@@ -506,22 +459,31 @@ export class AppComponent implements OnInit {
       magaluPartnerId: this.affMagalu.trim() || 'parceirosmartgift',
       kabumAffiliateTag: this.affKabum.trim() || 'smartgift_kabum'
     });
-    this.showToast('💰 Tags de Afiliado salvas! Todos os botões de loja agora usam seus códigos.');
+    this.showToast('💰 Tags de Afiliado salvas no banco Supabase e aplicadas nas lojas!');
   }
 
-  async copyFigmaSvgToClipboard(proto: FigmaScreenProto): Promise<void> {
-    try {
-      const response = await fetch(`/figma-prototypes/${proto.fileName}`);
-      if (response.ok) {
-        const svgText = await response.text();
-        await navigator.clipboard.writeText(svgText);
-        this.showToast(`📋 Camadas de "${proto.title}" copiadas! Abra o Figma e aperte Ctrl+V.`);
-        return;
+  async installPwaApp(): Promise<void> {
+    if (this.deferredInstallPrompt) {
+      this.deferredInstallPrompt.prompt();
+      const choice = await this.deferredInstallPrompt.userChoice;
+      if (choice?.outcome === 'accepted') {
+        this.showToast('📲 Instalando o aplicativo SmartGift...');
       }
-    } catch {
-      // fallback
+      this.deferredInstallPrompt = null;
+      this.canInstallPwa.set(false);
+      return;
     }
-    this.showToast(`📐 Arquivo SVG disponível em figma-prototypes/${proto.fileName}`);
+    this.showInstallModal.set(true);
+  }
+
+  async refreshDatabaseStats(): Promise<void> {
+    await this.giftService.supabaseDb.refreshTableCounts();
+    this.showToast('🗄️ Contagem das 12 tabelas relacionais (3FN) sincronizada ao vivo com o Supabase (sa-east-1)!');
+  }
+
+  copySqlSchemaCommand(): void {
+    navigator.clipboard?.writeText('supabase/migrations/001_smartgift_schema.sql');
+    this.showToast('📋 Caminho da migration SQL copiado: supabase/migrations/001_smartgift_schema.sql');
   }
 
   formatCurrency(value: number): string {

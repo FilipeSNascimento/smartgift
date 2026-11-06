@@ -8,6 +8,7 @@ import {
 } from '../models/smartgift.model';
 import { PersonalThemeId } from './theme.service';
 import { PriceSearchService } from './price-search.service';
+import { SupabaseDbService } from './supabase-db.service';
 
 const STORAGE_KEY = 'smartgift_prod_state_v2';
 
@@ -24,6 +25,7 @@ interface PersistedState {
 })
 export class SmartGiftService {
   private readonly priceSearch = inject(PriceSearchService);
+  readonly supabaseDb = inject(SupabaseDbService);
 
   readonly accounts = signal<UserProfile[]>([
     {
@@ -113,6 +115,7 @@ export class SmartGiftService {
 
   constructor() {
     this.loadFromStorage();
+    void this.supabaseDb.verifyConnectionAndStats();
 
     effect(() => {
       const state: PersistedState = {
@@ -130,18 +133,10 @@ export class SmartGiftService {
     });
   }
 
-  /**
-   * Regra de Ouro "Sem Spoiler" de Produto Real:
-   * - Nos presentes que pertencem a VOCÊ (`item.ownerId === currentUser.id`), você NUNCA vê reservas, vaquinhas ou comentários secretos.
-   * - Nos presentes dos seus amigos/familiares (`item.ownerId !== currentUser.id`), você vê e interage com tudo!
-   */
   canSeeSecrets(item: WishItem): boolean {
     return item.ownerId !== this.currentUser().id;
   }
 
-  /**
-   * Autenticação / Troca de Conta Ativa
-   */
   loginAsAccount(accountId: string): void {
     if (this.accounts().some(a => a.id === accountId)) {
       this.currentUserId.set(accountId);
@@ -162,8 +157,8 @@ export class SmartGiftService {
     };
     this.accounts.update(list => [...list, newUser]);
     this.currentUserId.set(newUser.id);
+    void this.supabaseDb.upsertProfile(newUser);
 
-    // Adiciona automaticamente ao clã atual para já interagir
     const activeId = this.selectedClanId();
     this.clans.update(list =>
       list.map(c =>
@@ -201,22 +196,18 @@ export class SmartGiftService {
     this.wishItems.update(items =>
       items.map(w => (w.ownerId === myId ? { ...w, ownerName: name.trim() || w.ownerName, ownerAvatar: avatar } : w))
     );
+    void this.supabaseDb.upsertProfile(this.currentUser());
   }
 
   updateAffiliateConfig(config: AffiliateConfig): void {
     this.affiliateConfig.set({ ...config });
+    void this.supabaseDb.upsertAffiliateConfig(this.currentUser().id, config);
   }
 
-  /**
-   * Busca ofertas reais na API do Mercado Livre + Comparador de Lojas
-   */
   async searchLiveProducts(queryOrUrl: string, customTitle?: string): Promise<LiveSearchResult[]> {
     return this.priceSearch.searchLiveProducts(queryOrUrl, this.affiliateConfig(), customTitle);
   }
 
-  /**
-   * Cria uma Carta de Presente a partir de um resultado real da busca ou link colado
-   */
   async createWishFromUrlOrSearch(
     rawUrlOrQuery: string,
     customTitle?: string,
@@ -258,6 +249,7 @@ export class SmartGiftService {
 
     this.wishItems.update(list => [newItem, ...list]);
     this.rewardXp(40);
+    void this.supabaseDb.insertWishWithOffers(newItem);
     return newItem;
   }
 
@@ -279,10 +271,15 @@ export class SmartGiftService {
           : item
       )
     );
+    const updated = this.wishItems().find(i => i.id === itemId);
+    if (updated) {
+      void this.supabaseDb.insertWishWithOffers(updated);
+    }
   }
 
   deleteWishItem(itemId: string): void {
     this.wishItems.update(items => items.filter(item => item.id !== itemId));
+    void this.supabaseDb.deleteWish(itemId);
   }
 
   async refreshWishPrices(itemId: string): Promise<void> {
@@ -317,20 +314,24 @@ export class SmartGiftService {
       items.map(item => {
         if (item.id !== itemId || item.ownerId === user.id) return item;
         if (item.secretStatus === 'reservado' && item.reservedByUserId === user.id) {
-          return {
+          const liberated: WishItem = {
             ...item,
             secretStatus: 'disponivel',
             reservedByUserId: undefined,
             reservedByName: undefined
           };
+          void this.supabaseDb.syncSecretReservation(liberated);
+          return liberated;
         }
         this.rewardXp(25);
-        return {
+        const reserved: WishItem = {
           ...item,
           secretStatus: 'reservado',
           reservedByUserId: user.id,
           reservedByName: user.name
         };
+        void this.supabaseDb.syncSecretReservation(reserved);
+        return reserved;
       })
     );
   }
@@ -351,7 +352,7 @@ export class SmartGiftService {
         );
         const isCompleted = newCollected >= existingPool.targetAmount;
         this.rewardXp(35);
-        return {
+        const updatedItem: WishItem = {
           ...item,
           secretStatus: isCompleted ? 'comprado' : 'vaquinha_ativa',
           secretPool: {
@@ -369,6 +370,8 @@ export class SmartGiftService {
             ]
           }
         };
+        void this.supabaseDb.syncPoolContribution(updatedItem, user.id, user.name, user.avatar, amount);
+        return updatedItem;
       })
     );
   }
@@ -377,15 +380,17 @@ export class SmartGiftService {
     const clean = text.trim();
     if (!clean) return;
     const user = this.currentUser();
+    const commentId = 'c-' + Date.now();
     this.wishItems.update(items =>
       items.map(item => {
         if (item.id !== itemId || item.ownerId === user.id) return item;
+        void this.supabaseDb.insertSecretComment(commentId, item, user.id, user.name, user.avatar, clean);
         return {
           ...item,
           secretComments: [
             ...item.secretComments,
             {
-              id: 'c-' + Date.now(),
+              id: commentId,
               authorId: user.id,
               authorName: user.name,
               authorAvatar: user.avatar,
@@ -454,6 +459,7 @@ export class SmartGiftService {
     this.clans.update(list => [newClan, ...list]);
     this.selectedClanId.set(newClan.id);
     this.rewardXp(50);
+    void this.supabaseDb.insertClan(newClan, user.id);
     return newClan;
   }
 
