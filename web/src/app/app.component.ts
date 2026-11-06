@@ -1,21 +1,29 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SmartGiftService, ViewPerspective } from './services/smartgift.service';
+import { SmartGiftService } from './services/smartgift.service';
 import { PersonalThemeId, ThemeService } from './services/theme.service';
-import { WishItem } from './models/smartgift.model';
+import { LiveSearchResult, WishItem } from './models/smartgift.model';
 
-export type ActiveTab = 'minha-lista' | 'amigos' | 'clas' | 'temas' | 'mobile-preview';
-export type MobileClashTab = 'insta-feed' | 'clash-deck' | 'clash-clan' | 'price-arena' | 'themes';
+export type ProductTab = 'feed' | 'deck' | 'clans' | 'arena' | 'settings';
 
-export interface MobileStoryHighlight {
+export interface StoryItem {
   id: string;
   userName: string;
   avatar: string;
   badge: string;
   title: string;
   subtitle: string;
-  actionTab?: MobileClashTab;
+  targetTab: ProductTab;
+  memberFilter?: string;
+}
+
+export interface FigmaScreenProto {
+  id: string;
+  number: string;
+  title: string;
+  subtitle: string;
+  fileName: string;
 }
 
 @Component({
@@ -25,121 +33,202 @@ export interface MobileStoryHighlight {
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   readonly giftService = inject(SmartGiftService);
   readonly themeService = inject(ThemeService);
 
-  readonly activeTab = signal<ActiveTab>('mobile-preview');
-  readonly mobileTab = signal<MobileClashTab>('insta-feed');
-  readonly activeStory = signal<MobileStoryHighlight | null>(null);
-  readonly applyClanThemeAutomatically = signal<boolean>(true);
+  readonly activeTab = signal<ProductTab>('feed');
+  readonly activeStory = signal<StoryItem | null>(null);
+  readonly toastMessage = signal<string | null>(null);
 
-  // Form: Adicionar Presente por Link
-  newLinkUrl = '';
-  newLinkCustomTitle = '';
-  newLinkNotes = '';
-  newLinkPriority: 'alta' | 'media' | 'sonho' = 'alta';
-  extractionFeedback = signal<string | null>(null);
+  // Modal de Login / Troca de Conta / Cadastro
+  readonly showAuthModal = signal<boolean>(false);
+  readonly authModalMode = signal<'switch' | 'register' | 'edit'>('switch');
+  regName = '';
+  regEmail = '';
+  regAvatar = '🎁';
+  regBirthday = '';
 
-  // Controle de abas internas dos cards (Comparador, Vaquinha, Chat Secreto)
-  expandedOffersMap = signal<Record<string, boolean>>({ 'w-1': true, 'w-4': true });
+  // Forjador de Carta (Extrator de Link + Busca Real Mercado Livre)
+  forgeInput = '';
+  forgeCustomTitle = '';
+  forgeNotes = '';
+  forgePriority: 'alta' | 'media' | 'sonho' = 'alta';
+  readonly isSearchingForge = signal<boolean>(false);
+  readonly forgeLiveResults = signal<LiveSearchResult[]>([]);
+
+  // Modal de Edição de Carta do Deck
+  readonly editingItem = signal<WishItem | null>(null);
+  editTitle = '';
+  editNotes = '';
+  editPriority: 'alta' | 'media' | 'sonho' = 'alta';
+
+  // Arena Caça-Preços em Tempo Real
+  arenaQuery = 'PlayStation 5 Slim';
+  readonly isSearchingArena = signal<boolean>(false);
+  readonly arenaResults = signal<LiveSearchResult[]>([]);
+
+  // Controles de Cards (Comparativo expandido, doação customizada, comentários)
+  readonly expandedOffersMap = signal<Record<string, boolean>>({});
+  readonly refreshingItemId = signal<string | null>(null);
   customContributionAmount: Record<string, number> = {};
   newCommentText: Record<string, string> = {};
 
-  // Form: Criar Novo Clã
-  showCreateClanModal = signal<boolean>(false);
+  // Clãs: Entrar por Código, Criar Clã, Novo Evento, Baú Secreto
+  inviteCodeInput = '';
+  readonly showCreateClanModal = signal<boolean>(false);
   newClanName = '';
   newClanIcon = '🛡️';
   newClanMotto = '';
   newClanTheme: PersonalThemeId = 'violet';
+  newClanBudget = 180;
 
-  // Amigo Secreto revelação (Baú Lendário no Mobile / Card na Web)
-  revealMySecretFriend = signal<boolean>(false);
+  readonly showNewEventModal = signal<boolean>(false);
+  newEventTitle = '';
+  newEventDateLabel = '';
+  newEventDays = 15;
 
-  readonly mobileStories: MobileStoryHighlight[] = [
+  readonly revealMySecretFriend = signal<boolean>(false);
+  readonly applyClanThemeAutomatically = signal<boolean>(true);
+
+  // Configurações de Afiliado
+  affAmazon = '';
+  affMercadoLivre = '';
+  affShopee = '';
+  affMagalu = '';
+  affKabum = '';
+
+  readonly figmaFileUrl = 'https://www.figma.com/design/NMXEihmjSrwSjZKxoPCzyR';
+
+  readonly figmaPrototypes: FigmaScreenProto[] = [
+    {
+      id: 'fp-1',
+      number: '01',
+      title: 'Login, Código de Clã & Multicontas',
+      subtitle: 'Entrada rápida, convite #FAMILIA-NASC e troca de perfil',
+      fileName: '01-login-onboarding.svg'
+    },
+    {
+      id: 'fp-2',
+      number: '02',
+      title: 'Feed Social & Stories (Instagram)',
+      subtitle: 'Top HUD Clash Royale + Stories de aniversários + Feed c/ Vaquinha',
+      fileName: '02-feed-instagram-stories.svg'
+    },
+    {
+      id: 'fp-3',
+      number: '03',
+      title: 'Meu Deck 2x2 & Forjar Carta (Clash)',
+      subtitle: 'Cartas Lendária/Épica/Rara + Extrator e Busca Real',
+      fileName: '03-meu-deck-forjar-carta.svg'
+    },
+    {
+      id: 'fp-4',
+      number: '04',
+      title: 'Clã, Mural de Doação & Baú Secreto',
+      subtitle: 'Pedidos de vaquinha estilo doação de cartas + Baú Lendário',
+      fileName: '04-cla-vaquinha-bau-secreto.svg'
+    },
+    {
+      id: 'fp-5',
+      number: '05',
+      title: 'Arena Caça-Preços & Monetização',
+      subtitle: 'Comparativo ao vivo Mercado Livre/Amazon/KaBuM + Tags Afiliado',
+      fileName: '05-arena-precos-afiliados.svg'
+    }
+  ];
+
+  readonly availableAvatars = ['🧑‍💻', '👩‍🦱', '👩‍💻', '🧔', '👰', '🕶️', '🎨', '🦸‍♂️', '👑', '🎮'];
+  readonly availableCrests = ['🦁', '🚀', '🛡️', '👑', '🐉', '🥂', '🎮', '🌟'];
+
+  readonly quickSearchChips = [
+    'AirFryer Mondial 4L',
+    'Fone Bluetooth JBL',
+    'Kindle 16GB',
+    'Controle DualSense PS5',
+    'Cafeteira Nespresso',
+    'Tênis Nike Corrida'
+  ];
+
+  readonly stories: StoryItem[] = [
     {
       id: 'st-1',
       userName: 'Letícia (6d)',
       avatar: '👩‍💻',
       badge: '🎂 12 Nov',
       title: 'Aniversário da Letícia em 6 dias!',
-      subtitle: 'O Kindle Paperwhite da lista dela está com 19% OFF na Amazon e a vaquinha do Clã TCC já começou!',
-      actionTab: 'clash-clan'
+      subtitle: 'O Kindle Paperwhite da lista dela está com 19% OFF na Amazon e a vaquinha do Clã já começou!',
+      targetTab: 'clans'
     },
     {
       id: 'st-2',
-      userName: 'Mãe (Helena)',
+      userName: 'Helena (Mãe)',
       avatar: '👩‍🦱',
       badge: '🪙 64%',
       title: 'Vaquinha Secreta: Cafeteira Nespresso',
       subtitle: 'Já arrecadamos R$ 250 de R$ 389 no Clã Família Nascimento sem ela desconfiar de nada!',
-      actionTab: 'clash-clan'
+      targetTab: 'feed',
+      memberFilter: 'u-mae'
     },
     {
       id: 'st-3',
       userName: 'Lucas',
       avatar: '🧔',
       badge: '🔥 Épica',
-      title: 'Lucas forjou uma nova Carta Épica!',
+      title: 'Lucas forjou uma Carta Épica!',
       subtitle: 'Controle DualSense PS5 Midnight Black com 26% de desconto na KaBuM!',
-      actionTab: 'insta-feed'
+      targetTab: 'feed',
+      memberFilter: 'u-lucas'
     },
     {
       id: 'st-4',
-      userName: 'Bia & Rafa',
-      avatar: '👰',
-      badge: '🥂 24d',
-      title: 'Chá de Casa Nova em 24 dias',
-      subtitle: 'Confira os presentes disponíveis do casal e marque sua reserva secreta.',
-      actionTab: 'clash-clan'
+      userName: 'Baú Secreto',
+      avatar: '🧰',
+      badge: '🎲 Abrir',
+      title: 'Baú Lendário de Amigo Secreto!',
+      subtitle: 'Toque para abrir o seu Baú de Amigo Secreto no Clã sem ninguém ver.',
+      targetTab: 'clans'
     },
     {
       id: 'st-5',
-      userName: 'Baú Natal',
-      avatar: '🧰',
-      badge: '🎲 Abrir',
-      title: 'Baú Lendário de Amigo Secreto Pronto!',
-      subtitle: 'Toque para ir ao Clã e abrir o seu Baú de Amigo Secreto sem ninguém ver!',
-      actionTab: 'clash-clan'
+      userName: 'Caça-Preços',
+      avatar: '🔍',
+      badge: '⚡ Ao Vivo',
+      title: 'Busca Real de Preços Ativa!',
+      subtitle: 'Pesquise qualquer produto no Mercado Livre e compare com links de afiliado.',
+      targetTab: 'arena'
     }
   ];
 
-  readonly quickSampleLinks = [
-    { label: '⚡ AirFryer Inox 4L', url: 'https://www.amazon.com.br/fritadeira-airfryer-mondial-inox', notes: 'Voltagem 110v, cor Inox' },
-    { label: '👟 Tênis Nike Pegasus', url: 'https://www.mercadolivre.com.br/tenis-nike-air-zoom-pegasus', notes: 'Tamanho 41' },
-    { label: '🔊 Echo Dot 5ª Geração Alexa', url: 'https://www.amazon.com.br/echo-dot-5-geracao-alexa', notes: 'Cor Azul ou Preta' },
-    { label: '🪑 Cadeira Ergonômica Mesh', url: 'https://www.kabum.com.br/cadeira-ergonomica-mesh-pro', notes: 'Para o home office' }
-  ];
-
-  readonly availableCrests = ['🦁', '🚀', '🛡️', '👑', '🐉', '🥂', '🎮', '🌟'];
-
-  setTab(tab: ActiveTab): void {
-    this.activeTab.set(tab);
-    if (tab === 'clas' && this.applyClanThemeAutomatically()) {
-      this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
-    } else if (tab !== 'clas' && !(tab === 'mobile-preview' && this.mobileTab() === 'clash-clan')) {
-      this.themeService.setClanThemeOverride(null);
-    }
+  ngOnInit(): void {
+    const aff = this.giftService.affiliateConfig();
+    this.affAmazon = aff.amazonTag;
+    this.affMercadoLivre = aff.mercadoLivreMattTool;
+    this.affShopee = aff.shopeeAffiliateId;
+    this.affMagalu = aff.magaluPartnerId;
+    this.affKabum = aff.kabumAffiliateTag;
+    void this.runArenaSearch();
   }
 
-  setMobileTab(tab: MobileClashTab): void {
-    this.mobileTab.set(tab);
-    if (tab === 'clash-clan' && this.applyClanThemeAutomatically()) {
+  setTab(tab: ProductTab): void {
+    this.activeTab.set(tab);
+    if (tab === 'clans' && this.applyClanThemeAutomatically()) {
       this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
     } else {
       this.themeService.setClanThemeOverride(null);
     }
   }
 
-  openStory(story: MobileStoryHighlight): void {
+  openStory(story: StoryItem): void {
     this.activeStory.set(story);
   }
 
-  goToStoryTarget(story: MobileStoryHighlight): void {
+  triggerStoryAction(story: StoryItem): void {
     this.activeStory.set(null);
-    if (story.actionTab) {
-      this.setMobileTab(story.actionTab);
+    if (story.memberFilter) {
+      this.giftService.selectedMemberFilter.set(story.memberFilter);
     }
+    this.setTab(story.targetTab);
   }
 
   getRarityLabel(priority: 'alta' | 'media' | 'sonho'): string {
@@ -148,55 +237,160 @@ export class AppComponent {
     return '💎 RARA';
   }
 
-  selectClan(clanId: string): void {
-    this.giftService.selectedClanId.set(clanId);
-    this.revealMySecretFriend.set(false);
-    if (this.applyClanThemeAutomatically()) {
-      const clan = this.giftService.clans().find(c => c.id === clanId);
-      if (clan) {
-        this.themeService.setClanThemeOverride(clan.themeId);
-      }
-    }
-  }
-
-  toggleClanThemeSync(): void {
-    const next = !this.applyClanThemeAutomatically();
-    this.applyClanThemeAutomatically.set(next);
-    if (next && (this.activeTab() === 'clas' || (this.activeTab() === 'mobile-preview' && this.mobileTab() === 'clash-clan'))) {
-      this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
+  // ===========================================================================
+  // AUTENTICAÇÃO & TROCA RÁPIDA DE CONTA
+  // ===========================================================================
+  openAccountModal(mode: 'switch' | 'register' | 'edit' = 'switch'): void {
+    this.authModalMode.set(mode);
+    if (mode === 'edit') {
+      const me = this.giftService.currentUser();
+      this.regName = me.name;
+      this.regEmail = me.email;
+      this.regAvatar = me.avatar;
+      this.regBirthday = me.birthday;
     } else {
-      this.themeService.setClanThemeOverride(null);
+      this.regName = '';
+      this.regEmail = '';
+      this.regAvatar = '🎁';
+      this.regBirthday = '';
+    }
+    this.showAuthModal.set(true);
+  }
+
+  switchAccount(accountId: string): void {
+    this.giftService.loginAsAccount(accountId);
+    this.revealMySecretFriend.set(false);
+    this.showAuthModal.set(false);
+    this.showToast(`🔄 Conta ativa: ${this.giftService.currentUser().name} (Modo Sem Spoiler ajustado para este perfil!)`);
+  }
+
+  handleRegisterOrEditAccount(): void {
+    if (!this.regName.trim()) return;
+    if (this.authModalMode() === 'edit') {
+      this.giftService.updateMyProfile(this.regName, this.regEmail, this.regAvatar, this.regBirthday);
+      this.showToast('✅ Perfil atualizado com sucesso!');
+    } else {
+      const created = this.giftService.registerNewAccount(
+        this.regName,
+        this.regEmail || `${this.regName.toLowerCase().replace(/\s+/g, '.')}@smartgift.app`,
+        this.regAvatar,
+        this.regBirthday || '15 Mai'
+      );
+      this.showToast(`🎉 Conta criada! Bem-vindo(a), ${created.name}!`);
+    }
+    this.showAuthModal.set(false);
+  }
+
+  // ===========================================================================
+  // FORJAR CARTA & BUSCA REAL DE PREÇOS (MERCADO LIVRE API)
+  // ===========================================================================
+  async searchForgeCandidates(chipQuery?: string): Promise<void> {
+    if (chipQuery) {
+      this.forgeInput = chipQuery;
+    }
+    if (!this.forgeInput.trim()) return;
+
+    this.isSearchingForge.set(true);
+    try {
+      const results = await this.giftService.searchLiveProducts(this.forgeInput, this.forgeCustomTitle);
+      this.forgeLiveResults.set(results);
+    } finally {
+      this.isSearchingForge.set(false);
     }
   }
 
-  setPerspective(mode: ViewPerspective): void {
-    this.giftService.togglePerspective(mode);
+  async forgeDirectlyFromInput(): Promise<void> {
+    if (!this.forgeInput.trim()) return;
+    this.isSearchingForge.set(true);
+    try {
+      const created = await this.giftService.createWishFromUrlOrSearch(
+        this.forgeInput,
+        this.forgeCustomTitle,
+        this.forgeNotes,
+        this.forgePriority
+      );
+      this.expandedOffersMap.update(m => ({ ...m, [created.id]: true }));
+      this.forgeInput = '';
+      this.forgeCustomTitle = '';
+      this.forgeNotes = '';
+      this.forgeLiveResults.set([]);
+      this.showToast(`🃏 Carta "${created.title}" forjada no seu Deck por R$ ${this.formatCurrency(created.lowestPrice)}!`);
+    } finally {
+      this.isSearchingForge.set(false);
+    }
   }
 
-  fillSampleLink(sample: { label: string; url: string; notes: string }): void {
-    this.newLinkUrl = sample.url;
-    this.newLinkNotes = sample.notes;
-    this.newLinkCustomTitle = '';
-  }
-
-  handleExtractAndAdd(): void {
-    if (!this.newLinkUrl.trim()) return;
-    const created = this.giftService.extractAndCompareFromUrl(
-      this.newLinkUrl,
-      this.newLinkCustomTitle,
-      this.newLinkNotes,
-      this.newLinkPriority
+  pickCandidateToDeck(candidate: LiveSearchResult): void {
+    const created = this.giftService.addLiveResultToMyDeck(
+      candidate,
+      this.forgeNotes,
+      this.forgePriority,
+      this.forgeCustomTitle
     );
     this.expandedOffersMap.update(m => ({ ...m, [created.id]: true }));
-    this.extractionFeedback.set(
-      `✨ Carta "${created.title}" forjada! Menor preço: R$ ${this.formatCurrency(created.lowestPrice)} (-R$ ${this.formatCurrency(created.savingsAmount)})`
-    );
-    this.newLinkUrl = '';
-    this.newLinkCustomTitle = '';
-    this.newLinkNotes = '';
-    setTimeout(() => this.extractionFeedback.set(null), 6500);
+    this.forgeInput = '';
+    this.forgeCustomTitle = '';
+    this.forgeNotes = '';
+    this.forgeLiveResults.set([]);
+    this.showToast(`🃏 Carta "${created.title}" adicionada ao seu Deck!`);
   }
 
+  openEditWishModal(item: WishItem): void {
+    this.editingItem.set(item);
+    this.editTitle = item.title;
+    this.editNotes = item.notesFromOwner;
+    this.editPriority = item.priority;
+  }
+
+  saveWishEdits(): void {
+    const item = this.editingItem();
+    if (!item) return;
+    this.giftService.updateWishItem(item.id, this.editTitle, this.editNotes, this.editPriority);
+    this.editingItem.set(null);
+    this.showToast('✅ Carta atualizada!');
+  }
+
+  removeWish(itemId: string): void {
+    this.giftService.deleteWishItem(itemId);
+    this.showToast('🗑️ Carta removida do seu Deck.');
+  }
+
+  async refreshSingleItemPrices(itemId: string): Promise<void> {
+    this.refreshingItemId.set(itemId);
+    try {
+      await this.giftService.refreshWishPrices(itemId);
+      this.showToast('✅ Preços atualizados em tempo real!');
+    } finally {
+      this.refreshingItemId.set(null);
+    }
+  }
+
+  // ===========================================================================
+  // ARENA CAÇA-PREÇOS AO VIVO
+  // ===========================================================================
+  async runArenaSearch(chip?: string): Promise<void> {
+    if (chip) {
+      this.arenaQuery = chip;
+    }
+    if (!this.arenaQuery.trim()) return;
+    this.isSearchingArena.set(true);
+    try {
+      const list = await this.giftService.searchLiveProducts(this.arenaQuery);
+      this.arenaResults.set(list);
+    } finally {
+      this.isSearchingArena.set(false);
+    }
+  }
+
+  addArenaResultToDeck(res: LiveSearchResult): void {
+    const created = this.giftService.addLiveResultToMyDeck(res, 'Encontrado na Arena Caça-Preços', 'alta');
+    this.showToast(`🃏 "${created.title}" adicionado ao seu Deck!`);
+    this.setTab('deck');
+  }
+
+  // ===========================================================================
+  // INTERAÇÕES SOCIAIS (RESERVA SECRETA, VAQUINHA, CHAT SECRETO)
+  // ===========================================================================
   toggleOffers(itemId: string): void {
     this.expandedOffersMap.update(m => ({ ...m, [itemId]: !m[itemId] }));
   }
@@ -207,6 +401,7 @@ export class AppComponent {
 
   contributePreset(itemId: string, amount: number): void {
     this.giftService.contributeToSecretPool(itemId, amount);
+    this.showToast(`🪙 Você doou +R$ ${amount} na vaquinha secreta!`);
   }
 
   contributeCustom(itemId: string): void {
@@ -214,6 +409,7 @@ export class AppComponent {
     if (!val || val <= 0) return;
     this.giftService.contributeToSecretPool(itemId, val);
     this.customContributionAmount[itemId] = 0;
+    this.showToast(`🪙 Doação secreta de R$ ${this.formatCurrency(val)} registrada!`);
   }
 
   sendSecretComment(itemId: string): void {
@@ -228,19 +424,31 @@ export class AppComponent {
     return Math.min(100, Math.round((item.secretPool.collectedAmount / item.secretPool.targetAmount) * 100));
   }
 
-  getMySecretSantaTarget() {
-    const clan = this.giftService.activeClan();
-    const myId = this.giftService.currentUser().id;
-    return clan.secretSantaPairs.find(p => p.giverId === myId);
+  // ===========================================================================
+  // CLÃS, CÓDIGO DE CONVITE E BAÚ DE AMIGO SECRETO
+  // ===========================================================================
+  selectClan(clanId: string): void {
+    this.giftService.selectedClanId.set(clanId);
+    this.revealMySecretFriend.set(false);
+    if (this.applyClanThemeAutomatically()) {
+      const clan = this.giftService.clans().find(c => c.id === clanId);
+      if (clan) {
+        this.themeService.setClanThemeOverride(clan.themeId);
+      }
+    }
   }
 
-  goToMemberWishlist(memberId: string): void {
-    if (memberId === this.giftService.currentUser().id) {
-      this.setTab('minha-lista');
-    } else {
-      this.giftService.selectedMemberFilter.set(memberId);
-      this.setTab('amigos');
+  handleJoinClanByCode(): void {
+    const res = this.giftService.joinClanByInviteCode(this.inviteCodeInput);
+    this.showToast(res.message);
+    if (res.ok) {
+      this.inviteCodeInput = '';
     }
+  }
+
+  copyClanInviteCode(code: string): void {
+    navigator.clipboard?.writeText(code);
+    this.showToast(`📋 Código ${code} copiado para enviar no WhatsApp!`);
   }
 
   handleCreateClan(): void {
@@ -249,17 +457,83 @@ export class AppComponent {
       this.newClanName.trim(),
       this.newClanIcon,
       this.newClanMotto.trim(),
-      this.newClanTheme
+      this.newClanTheme,
+      this.newClanBudget
     );
-    if (this.applyClanThemeAutomatically()) {
-      this.themeService.setClanThemeOverride(created.themeId);
-    }
     this.newClanName = '';
     this.newClanMotto = '';
     this.showCreateClanModal.set(false);
+    this.showToast(`🏰 Clã "${created.name}" fundado! Código: ${created.inviteCode}`);
+  }
+
+  handleAddClanEvent(): void {
+    if (!this.newEventTitle.trim()) return;
+    this.giftService.addClanEvent(
+      this.giftService.activeClan().id,
+      this.newEventTitle,
+      this.newEventDateLabel,
+      this.newEventDays
+    );
+    this.newEventTitle = '';
+    this.newEventDateLabel = '';
+    this.showNewEventModal.set(false);
+    this.showToast('📅 Evento adicionado ao mural do Clã!');
+  }
+
+  getMySecretSantaTarget() {
+    const clan = this.giftService.activeClan();
+    const myId = this.giftService.currentUser().id;
+    return clan.secretSantaPairs.find(p => p.giverId === myId);
+  }
+
+  goToMemberWishlist(memberId: string): void {
+    if (memberId === this.giftService.currentUser().id) {
+      this.setTab('deck');
+    } else {
+      this.giftService.selectedMemberFilter.set(memberId);
+      this.setTab('feed');
+    }
+  }
+
+  // ===========================================================================
+  // AFILIADOS & EXPORTAÇÃO DE CAMADAS PARA O FIGMA
+  // ===========================================================================
+  saveAffiliateConfig(): void {
+    this.giftService.updateAffiliateConfig({
+      amazonTag: this.affAmazon.trim() || 'smartgift-20',
+      mercadoLivreMattTool: this.affMercadoLivre.trim() || 'smartgift_br',
+      shopeeAffiliateId: this.affShopee.trim() || 'br_smartgift',
+      magaluPartnerId: this.affMagalu.trim() || 'parceirosmartgift',
+      kabumAffiliateTag: this.affKabum.trim() || 'smartgift_kabum'
+    });
+    this.showToast('💰 Tags de Afiliado salvas! Todos os botões de loja agora usam seus códigos.');
+  }
+
+  async copyFigmaSvgToClipboard(proto: FigmaScreenProto): Promise<void> {
+    try {
+      const response = await fetch(`/figma-prototypes/${proto.fileName}`);
+      if (response.ok) {
+        const svgText = await response.text();
+        await navigator.clipboard.writeText(svgText);
+        this.showToast(`📋 Camadas de "${proto.title}" copiadas! Abra o Figma e aperte Ctrl+V.`);
+        return;
+      }
+    } catch {
+      // fallback
+    }
+    this.showToast(`📐 Arquivo SVG disponível em figma-prototypes/${proto.fileName}`);
   }
 
   formatCurrency(value: number): string {
-    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  private showToast(msg: string): void {
+    this.toastMessage.set(msg);
+    setTimeout(() => {
+      if (this.toastMessage() === msg) {
+        this.toastMessage.set(null);
+      }
+    }, 5000);
   }
 }

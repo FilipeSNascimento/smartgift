@@ -1,1224 +1,1093 @@
-<div class="app-shell">
-  <!-- TOPBAR FIXA COM SELETOR DE VISÃO (SEM SPOILER) E TEMAS -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-area" (click)="setTab('mobile-preview')">
-        <div class="brand-logo">🎁</div>
-        <div>
-          <div class="brand-title-row">
-            <span class="brand-name brand-font">SmartGift</span>
-            <span class="brand-badge">Clãs & Menor Preço</span>
+<div class="product-shell">
+  <!-- TOAST DE FEEDBACK EM TEMPO REAL -->
+  @if (toastMessage(); as msg) {
+    <div class="clash-toast" (click)="toastMessage.set(null)">
+      <span>{{ msg }}</span>
+      <button type="button" class="toast-close">✕</button>
+    </div>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- TOP HUD ESTILO CLASH ROYALE (NÍVEL, XP, ECONOMIA REAL & PERFIL ATIVO)   -->
+  <!-- ======================================================================= -->
+  <header class="clash-hud-header">
+    <div class="hud-inner">
+      <div class="hud-brand" (click)="setTab('feed')">
+        <div class="hud-logo">🎁</div>
+        <div class="hud-brand-text">
+          <span class="hud-title brand-font">SmartGift</span>
+          <span class="hud-sub">Clãs & Menor Preço Real</span>
+        </div>
+      </div>
+
+      <!-- INDICADORES GAMER: NÍVEL + OURO ECONOMIZADO -->
+      <div class="hud-stats-row">
+        <div class="hud-level-pill" title="Ganhe XP adicionando presentes, reservando e ajudando nas vaquinhas!">
+          <span class="hud-crown">👑</span>
+          <div>
+            <strong>Nv. {{ giftService.currentUser().level }}</strong>
+            <small>{{ giftService.currentUser().xp }}/{{ giftService.currentUser().xpNextLevel }} XP</small>
           </div>
-          <p class="brand-subtitle">Listas inteligentes 100% Sem Spoiler</p>
+        </div>
+
+        <div class="hud-gold-pill" (click)="setTab('arena')" title="Economia total encontrada pelo comparador de lojas">
+          <span>🪙</span>
+          <div>
+            <strong>R$ {{ formatCurrency(giftService.totalSavingsFound()) }}</strong>
+            <small>Economia nas listas</small>
+          </div>
         </div>
       </div>
 
-      <!-- SIMULADOR DE VISÃO: DONO VS. AMIGO DO CLÃ -->
-      <div class="perspective-switcher" title="Alterne para demonstrar na apresentação como o segredo funciona!">
-        <span class="perspective-label">Modo de Visão:</span>
-        <button
-          type="button"
-          class="persp-btn"
-          [class.active]="giftService.perspective() === 'owner'"
-          (click)="setPerspective('owner')">
-          🛡️ Dono da Lista (Sem Spoilers)
+      <!-- AÇÕES RÁPIDAS + SELETOR DE CONTA LOGADA -->
+      <div class="hud-right-actions">
+        <button type="button" class="clash-3d-btn gold sm" (click)="setTab('deck')">
+          ⚡ + Forjar Carta
         </button>
-        <button
-          type="button"
-          class="persp-btn secret-mode"
-          [class.active]="giftService.perspective() === 'clan_friend'"
-          (click)="setPerspective('clan_friend')">
-          🕵️ Amigo do Clã (Ver Segredos)
-        </button>
-      </div>
-
-      <!-- TEMAS RÁPIDOS + DARK MODE + PERFIL -->
-      <div class="topbar-actions">
-        <div class="theme-dots" title="Trocar Tema Pessoal">
-          @for (t of themeService.themes; track t.id) {
-            <button
-              type="button"
-              class="theme-dot"
-              [class.selected]="themeService.activeTheme() === t.id"
-              [style.background]="t.primaryHex"
-              [title]="t.name"
-              (click)="themeService.setPersonalTheme(t.id)">
-            </button>
-          }
-        </div>
 
         <button
           type="button"
-          class="mode-toggle-btn"
+          class="hud-mode-btn"
           (click)="themeService.toggleColorMode()"
           title="Alternar Modo Claro / Escuro">
-          {{ themeService.colorMode() === 'light' ? '🌙 Escuro' : '☀️ Claro' }}
+          {{ themeService.colorMode() === 'light' ? '🌙' : '☀️' }}
         </button>
 
-        <div class="user-Chip">
-          <span class="user-avatar">{{ giftService.currentUser().avatar }}</span>
-          <span class="user-name">{{ giftService.currentUser().name }}</span>
-        </div>
+        <button type="button" class="hud-account-btn" (click)="openAccountModal('switch')" title="Trocar de conta ou criar perfil">
+          <span class="acc-avatar">{{ giftService.currentUser().avatar }}</span>
+          <div class="acc-meta">
+            <strong>{{ giftService.currentUser().name }}</strong>
+            <small>🛡️ Conta Ativa ▾</small>
+          </div>
+        </button>
       </div>
     </div>
+
+    <!-- NAVEGAÇÃO DESKTOP INTEGRADA -->
+    <nav class="desktop-nav-tabs">
+      <button type="button" class="d-tab" [class.active]="activeTab() === 'feed'" (click)="setTab('feed')">
+        📸 Feed & Stories
+        <span class="d-badge">{{ giftService.friendsWishlist().length }}</span>
+      </button>
+      <button type="button" class="d-tab" [class.active]="activeTab() === 'deck'" (click)="setTab('deck')">
+        🃏 Meu Deck
+        <span class="d-badge">{{ giftService.myWishlist().length }}</span>
+      </button>
+      <button type="button" class="d-tab" [class.active]="activeTab() === 'clans'" (click)="setTab('clans')">
+        🏰 Clãs & Baú Secreto
+        <span class="d-badge">{{ giftService.clans().length }}</span>
+      </button>
+      <button type="button" class="d-tab" [class.active]="activeTab() === 'arena'" (click)="setTab('arena')">
+        🔍 Arena Caça-Preços (Ao Vivo)
+      </button>
+      <button type="button" class="d-tab" [class.active]="activeTab() === 'settings'" (click)="setTab('settings')">
+        ⚙️ Perfil, Afiliados & Figma
+      </button>
+    </nav>
   </header>
 
-  <!-- HERO BANNER GAMIFICADO E KPIs DE ECONOMIA -->
-  <section class="hero-section">
-    <div class="hero-container">
-      <div class="hero-content">
-        <div class="hero-Left">
-          <span class="hero-pill">
-            @if (themeService.clanOverrideTheme()) {
-              🏰 Tema do Clã Ativo: {{ giftService.activeClan().name }}
-            } @else {
-              ✨ Web em Angular + App Mobile Estilo Clash Royale & Instagram
-            }
-          </span>
-          <h1 class="brand-font">
-            Acertar no presente nunca foi tão fácil — e pelo menor preço.
-          </h1>
-          <p>
-            Cole o link do que você gostaria de ganhar, deixe o <strong>SmartGift</strong> comparar as lojas
-            e organize reservas, vaquinhas e amigo secreto nos seus <strong>Clãs</strong> sem estragar a surpresa!
-          </p>
+  <!-- ======================================================================= -->
+  <!-- MODAL FULLSCREEN DE STORY DO INSTAGRAM                                  -->
+  <!-- ======================================================================= -->
+  @if (activeStory(); as story) {
+    <div class="story-modal-backdrop" (click)="activeStory.set(null)">
+      <div class="story-modal-card" (click)="$event.stopPropagation()">
+        <div class="story-progress"><div class="story-progress-bar"></div></div>
+        <div class="story-header">
+          <span class="story-avatar">{{ story.avatar }}</span>
+          <div>
+            <strong>{{ story.userName }}</strong>
+            <span class="story-pill">{{ story.badge }}</span>
+          </div>
+          <button type="button" class="story-close-btn" (click)="activeStory.set(null)">✕</button>
         </div>
 
-        <div class="hero-kpis">
-          <div class="kpi-card">
-            <span class="kpi-icon">💸</span>
-            <div>
-              <span class="kpi-value">R$ {{ formatCurrency(giftService.totalSavingsFound()) }}</span>
-              <span class="kpi-label">Economia encontrada nas listas</span>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <span class="kpi-icon">🏰</span>
-            <div>
-              <span class="kpi-value">{{ giftService.clans().length }} Clãs Ativos</span>
-              <span class="kpi-label">Família, Faculdade & Casa Nova</span>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <span class="kpi-icon">🛡️</span>
-            <div>
-              <span class="kpi-value">
-                {{ giftService.perspective() === 'owner' ? 'Protegido' : 'Bastidores' }}
-              </span>
-              <span class="kpi-label">
-                {{ giftService.perspective() === 'owner' ? 'Spoilers ocultos para você' : 'Vendo reservas e vaquinhas' }}
-              </span>
-            </div>
-          </div>
+        <div class="story-body">
+          <div class="story-big-emoji">{{ story.avatar }}</div>
+          <h2 class="brand-font">{{ story.title }}</h2>
+          <p>{{ story.subtitle }}</p>
+          <button type="button" class="clash-3d-btn green lg" (click)="triggerStoryAction(story)">
+            ⚡ Ver Agora
+          </button>
         </div>
       </div>
-
-      <!-- NAVEGAÇÃO PRINCIPAL POR ABAS -->
-      <nav class="main-tabs">
-        <button
-          type="button"
-          class="tab-btn highlight-mobile-tab"
-          [class.active]="activeTab() === 'mobile-preview'"
-          (click)="setTab('mobile-preview')">
-          📱 App Celular (Clash Royale + Instagram)
-          <span class="tab-count">NOVO</span>
-        </button>
-
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'minha-lista'"
-          (click)="setTab('minha-lista')">
-          🎁 Minha Lista Web
-          <span class="tab-count">{{ giftService.myWishlist().length }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'amigos'"
-          (click)="setTab('amigos')">
-          🕵️ Presentear Amigos
-          <span class="tab-count">{{ giftService.friendsWishlist().length }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'clas'"
-          (click)="setTab('clas')">
-          🏰 Meus Clãs & Amigo Secreto
-          <span class="tab-count">{{ giftService.clans().length }}</span>
-        </button>
-
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'temas'"
-          (click)="setTab('temas')">
-          🎨 Identidade Visual & Temas
-        </button>
-      </nav>
     </div>
-  </section>
+  }
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="main-container">
+  <!-- ======================================================================= -->
+  <!-- CORPO PRINCIPAL DO PRODUTO                                              -->
+  <!-- ======================================================================= -->
+  <main class="product-main">
 
-    <!-- ========================================================================= -->
-    <!-- ABA MOBILE INTERATIVA: EXPERIÊNCIA CLASH ROYALE + INSTAGRAM NO NAVEGADOR  -->
-    <!-- ========================================================================= -->
-    @if (activeTab() === 'mobile-preview') {
-      <section class="mobile-showcase-wrapper">
-        <div class="mobile-explainer">
-          <span class="mobile-tag-pill">📱 Experiência Mobile Flutter (Android & iOS)</span>
-          <h2 class="brand-font">Organização de Telas: Clash Royale + Instagram</h2>
-          <p>
-            Interaja abaixo com o aplicativo mobile! Combinamos os <strong>Stories e Feed Social do Instagram</strong>
-            com o <strong>HUD de Nível/Ouro, Deck de Cartas Lendárias/Épicas, Mural de Doação de Vaquinha no Clã e Baú de Amigo Secreto do Clash Royale</strong>:
-          </p>
-
-          <div class="mobile-feature-pills">
-            <div class="m-pill" (click)="setMobileTab('insta-feed')" [class.active]="mobileTab() === 'insta-feed'">
-              <strong>📸 1. Stories & Feed (Instagram)</strong>
-              <span>Stories de aniversários/vaquinhas no topo + Feed de desejos dos amigos</span>
+    <!-- ===================================================================== -->
+    <!-- ABA 1: FEED SOCIAL & STORIES (ESTILO INSTAGRAM + CLASH ROYALE)        -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'feed') {
+      <!-- FAIXA DE STORIES HORIZONTAL -->
+      <section class="insta-stories-bar">
+        @for (st of stories; track st.id) {
+          <button type="button" class="story-bubble" (click)="openStory(st)">
+            <div class="story-gradient-ring">
+              <div class="story-inner-avatar">{{ st.avatar }}</div>
+              <span class="story-tag">{{ st.badge }}</span>
             </div>
-            <div class="m-pill" (click)="setMobileTab('clash-deck')" [class.active]="mobileTab() === 'clash-deck'">
-              <strong>🃏 2. Meu Deck de Cartas (Clash Royale)</strong>
-              <span>Seus presentes viram cartas colecionáveis (Lendária, Épica e Rara)</span>
-            </div>
-            <div class="m-pill" (click)="setMobileTab('clash-clan')" [class.active]="mobileTab() === 'clash-clan'">
-              <strong>🏰 3. Clã, Doação & Baú (Clash Royale)</strong>
-              <span>Pedir vaquinha igual pedir cartas no Clã + Baú Mágico de Amigo Secreto</span>
-            </div>
-            <div class="m-pill" (click)="setMobileTab('price-arena')" [class.active]="mobileTab() === 'price-arena'">
-              <strong>🔍 4. Arena Caça-Preços</strong>
-              <span>Comparador instantâneo entre Amazon, ML, Magalu, Shopee e KaBuM!</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- MOLDURA INTERATIVA DE SMARTPHONE -->
-        <div class="phone-device-frame">
-          <div class="phone-notch"></div>
-
-          <!-- TOP HUD ESTILO CLASH ROYALE -->
-          <div class="clash-top-hud">
-            <div class="clash-level-badge">
-              <span class="crown-icon">👑</span>
-              <div>
-                <strong>Nv. 12</strong>
-                <small>XP 840/1000</small>
-              </div>
-            </div>
-
-            <div class="clash-gold-pill" title="Economia total encontrada pelo comparador">
-              <span>🪙</span>
-              <strong>R$ {{ formatCurrency(giftService.totalSavingsFound()) }}</strong>
-            </div>
-
-            <button
-              type="button"
-              class="clash-shield-btn"
-              [class.spy-mode]="giftService.perspective() === 'clan_friend'"
-              (click)="setPerspective(giftService.perspective() === 'owner' ? 'clan_friend' : 'owner')">
-              {{ giftService.perspective() === 'owner' ? '🛡️ Sem Spoiler' : '🕵️ Espião' }}
-            </button>
-          </div>
-
-          <!-- CORPO DA TELA DO CELULAR -->
-          <div class="phone-screen-body">
-
-            <!-- MODAL DE STORY DO INSTAGRAM QUANDO CLICADO -->
-            @if (activeStory(); as story) {
-              <div class="insta-story-overlay" (click)="activeStory.set(null)">
-                <div class="insta-story-card" (click)="$event.stopPropagation()">
-                  <div class="story-progress-bar"><div class="story-progress-fill"></div></div>
-                  <div class="story-top-user">
-                    <span class="story-big-avatar">{{ story.avatar }}</span>
-                    <div>
-                      <strong>{{ story.userName }}</strong>
-                      <span class="story-badge-pill">{{ story.badge }}</span>
-                    </div>
-                    <button type="button" class="story-close" (click)="activeStory.set(null)">✕</button>
-                  </div>
-                  <div class="story-center-content">
-                    <div class="story-featured-icon">{{ story.avatar }}</div>
-                    <h3 class="brand-font">{{ story.title }}</h3>
-                    <p>{{ story.subtitle }}</p>
-                    <button type="button" class="clash-3d-btn green" (click)="goToStoryTarget(story)">
-                      ⚡ Ir para {{ story.actionTab === 'clash-clan' ? 'Mural do Clã' : 'Presente' }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            }
-
-            <!-- ===================================================== -->
-            <!-- MOBILE TAB 1: INSTAGRAM STORIES + FEED DE AMIGOS      -->
-            <!-- ===================================================== -->
-            @if (mobileTab() === 'insta-feed') {
-              <!-- CARROSSEL DE STORIES DO INSTAGRAM -->
-              <div class="insta-stories-strip">
-                @for (st of mobileStories; track st.id) {
-                  <button type="button" class="insta-story-item" (click)="openStory(st)">
-                    <div class="insta-ring">
-                      <div class="insta-avatar-inner">{{ st.avatar }}</div>
-                      <span class="insta-mini-badge">{{ st.badge }}</span>
-                    </div>
-                    <span class="insta-story-name">{{ st.userName }}</span>
-                  </button>
-                }
-              </div>
-
-              <!-- FEED VERTICAL ESTILO INSTAGRAM -->
-              <div class="insta-feed-list">
-                @for (item of giftService.friendsWishlist(); track item.id) {
-                  <article class="insta-post-card" [attr.data-rarity]="item.priority">
-                    <div class="insta-post-header">
-                      <div class="insta-post-author">
-                        <span class="insta-author-avatar">🎁</span>
-                        <div>
-                          <strong>{{ item.ownerName }}</strong>
-                          <small>{{ item.category }} • Menor preço em {{ item.offers[0].store }}</small>
-                        </div>
-                      </div>
-                      <span class="clash-rarity-chip" [attr.data-rarity]="item.priority">
-                        {{ getRarityLabel(item.priority) }}
-                      </span>
-                    </div>
-
-                    <div class="insta-post-image-wrap">
-                      <img [src]="item.imageUrl" [alt]="item.title" class="insta-post-img" />
-                      <div class="insta-price-sticker">
-                        🏆 R$ {{ formatCurrency(item.lowestPrice) }}
-                        <span>-{{ item.savingsPercent }}%</span>
-                      </div>
-                    </div>
-
-                    <div class="insta-post-body">
-                      <h4 class="insta-post-title brand-font">{{ item.title }}</h4>
-                      <p class="insta-post-caption">
-                        <strong>{{ item.ownerName }}:</strong> "{{ item.notesFromOwner }}"
-                      </p>
-
-                      <!-- BARRA DE DOAÇÃO ESTILO CLASH ROYALE DENTRO DO POST -->
-                      <div class="clash-donation-box">
-                        <div class="clash-donation-top">
-                          <span>🪙 Vaquinha Secreta do Clã</span>
-                          <strong>R$ {{ formatCurrency(item.secretPool?.collectedAmount ?? 0) }} / R$ {{ formatCurrency(item.lowestPrice) }} ({{ getPoolPercentage(item) }}%)</strong>
-                        </div>
-                        <div class="clash-bar-track">
-                          <div class="clash-bar-fill" [style.width.%]="getPoolPercentage(item)"></div>
-                        </div>
-
-                        <div class="clash-post-actions">
-                          <button
-                            type="button"
-                            class="clash-3d-btn purple"
-                            (click)="giftService.toggleSecretReservation(item.id)">
-                            {{ item.secretStatus === 'reservado' ? '🔒 Reservado' : '🤫 Reservar' }}
-                          </button>
-
-                          <button
-                            type="button"
-                            class="clash-3d-btn green"
-                            (click)="contributePreset(item.id, 50)">
-                            🪙 Doar R$ 50
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                }
-              </div>
-            }
-
-            <!-- ===================================================== -->
-            <!-- MOBILE TAB 2: MEU DECK DE CARTAS (CLASH ROYALE)       -->
-            <!-- ===================================================== -->
-            @if (mobileTab() === 'clash-deck') {
-              <div class="clash-deck-container">
-                <div class="clash-deck-header">
-                  <div>
-                    <h3 class="brand-font">🃏 Meu Deck de Desejos ({{ giftService.myWishlist().length }}/8 Cartas)</h3>
-                    <small>Cole o link de um produto para forjar uma nova carta na sua coleção!</small>
-                  </div>
-                </div>
-
-                <!-- FORJADOR RÁPIDO DE CARTA -->
-                <div class="clash-forge-box">
-                  <div class="forge-input-row">
-                    <input
-                      type="url"
-                      class="input-field forge-input"
-                      placeholder="Colar link (Amazon, ML, Shopee...)"
-                      [(ngModel)]="newLinkUrl" />
-                    <button
-                      type="button"
-                      class="clash-3d-btn gold"
-                      (click)="fillSampleLink(quickSampleLinks[0]); handleExtractAndAdd()">
-                      ⚡ Forjar Carta
-                    </button>
-                  </div>
-                </div>
-
-                <!-- GRADE 2x2 DE CARTAS ESTILO CLASH ROYALE -->
-                <div class="clash-cards-grid">
-                  @for (card of giftService.myWishlist(); track card.id) {
-                    <div class="clash-collectible-card" [attr.data-rarity]="card.priority">
-                      <div class="clash-card-rarity-banner">
-                        {{ getRarityLabel(card.priority) }}
-                      </div>
-
-                      <div class="clash-card-art">
-                        <img [src]="card.imageUrl" [alt]="card.title" />
-                        <span class="clash-elixir-badge" title="Economia encontrada">
-                          -{{ card.savingsPercent }}%
-                        </span>
-                      </div>
-
-                      <div class="clash-card-info">
-                        <strong class="clash-card-name">{{ card.title }}</strong>
-                        <div class="clash-card-price">
-                          <span>{{ card.offers[0].storeLogo }} {{ card.offers[0].store }}</span>
-                          <strong>R$ {{ formatCurrency(card.lowestPrice) }}</strong>
-                        </div>
-
-                        <div class="clash-card-status">
-                          @if (giftService.canSeeSecrets(card)) {
-                            <span class="spy-revealed">🕵️ {{ card.secretStatus === 'vaquinha_ativa' ? 'Vaquinha: ' + getPoolPercentage(card) + '%' : card.secretStatus }}</span>
-                          } @else {
-                            <span class="shield-ok">🛡️ Sem Spoiler</span>
-                          }
-                        </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- ===================================================== -->
-            <!-- MOBILE TAB 3: CLÃ, PEDIDOS DE VAQUINHA E BAÚ SECRETO  -->
-            <!-- ===================================================== -->
-            @if (mobileTab() === 'clash-clan') {
-              @let clan = giftService.activeClan();
-              <div class="clash-clan-screen">
-                <!-- Seletor horizontal de Clãs -->
-                <div class="mobile-clan-pills">
-                  @for (c of giftService.clans(); track c.id) {
-                    <button
-                      type="button"
-                      class="m-clan-chip"
-                      [class.active]="c.id === clan.id"
-                      (click)="selectClan(c.id)">
-                      {{ c.crestIcon }} {{ c.name }}
-                    </button>
-                  }
-                </div>
-
-                <!-- Header do Clã estilo Clash Royale -->
-                <div class="clash-clan-header">
-                  <div class="clash-clan-crest">{{ clan.crestIcon }}</div>
-                  <div class="clash-clan-meta">
-                    <span class="clash-trophy-tag">🏆 {{ clan.level * 210 }} Troféus • {{ clan.inviteCode }}</span>
-                    <h3 class="brand-font">{{ clan.name }}</h3>
-                    <small>{{ clan.motto }}</small>
-                  </div>
-                </div>
-
-                <!-- BAÚ LENDÁRIO DE AMIGO SECRETO -->
-                <div class="clash-chest-card" (click)="revealMySecretFriend.set(!revealMySecretFriend())">
-                  <div class="chest-icon">{{ revealMySecretFriend() ? '🎉' : '🧰' }}</div>
-                  <div class="chest-info">
-                    <span class="chest-label">BAÚ LENDÁRIO DE AMIGO SECRETO</span>
-                    @if (!clan.secretSantaDrawn) {
-                      <strong>Sorteio pendente neste Clã!</strong>
-                      <small>Toque para sortear agora</small>
-                    } @else if (!revealMySecretFriend()) {
-                      <strong>Toque no Baú para abrir em segredo!</strong>
-                      <small>Orçamento: Até R$ {{ formatCurrency(clan.secretSantaBudget) }}</small>
-                    } @else {
-                      @let target = getMySecretSantaTarget();
-                      <strong>Você tirou: {{ target?.receiverAvatar }} {{ target?.receiverName }}!</strong>
-                      <small>Toque novamente para esconder</small>
-                    }
-                  </div>
-                  @if (!clan.secretSantaDrawn) {
-                    <button
-                      type="button"
-                      class="clash-3d-btn gold"
-                      (click)="$event.stopPropagation(); giftService.drawSecretSanta(clan.id)">
-                      Sortear 🎲
-                    </button>
-                  }
-                </div>
-
-                <!-- MURAL DE PEDIDOS DE VAQUINHA NO CLÃ (IGUAL DOAR CARTAS NO CLASH ROYALE) -->
-                <div class="clash-chat-section-title">
-                  ⚔️ Pedidos de Vaquinha no Chat do Clã (Sem Spoiler p/ o Dono)
-                </div>
-
-                <div class="clash-clan-requests">
-                  @for (reqItem of giftService.friendsWishlist(); track reqItem.id) {
-                    <div class="clash-request-bubble">
-                      <div class="req-top">
-                        <span class="req-requester">🎁 Presente para <strong>{{ reqItem.ownerName }}</strong></span>
-                        <span class="req-store-tag">{{ reqItem.offers[0].storeLogo }} {{ reqItem.offers[0].store }}</span>
-                      </div>
-                      <div class="req-main-row">
-                        <img [src]="reqItem.imageUrl" [alt]="reqItem.title" class="req-thumb" />
-                        <div class="req-progress-col">
-                          <strong class="req-item-title">{{ reqItem.title }}</strong>
-                          <div class="clash-bar-track">
-                            <div class="clash-bar-fill" [style.width.%]="getPoolPercentage(reqItem)"></div>
-                          </div>
-                          <small>
-                            R$ {{ formatCurrency(reqItem.secretPool?.collectedAmount ?? 0) }} / R$ {{ formatCurrency(reqItem.lowestPrice) }} ({{ getPoolPercentage(reqItem) }}%)
-                          </small>
-                        </div>
-                        <button
-                          type="button"
-                          class="clash-3d-btn green"
-                          (click)="contributePreset(reqItem.id, 50)">
-                          DOAR<br><small>+R$ 50</small>
-                        </button>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-
-            <!-- ===================================================== -->
-            <!-- MOBILE TAB 4: ARENA CAÇA-PREÇOS (COMPARADOR)          -->
-            <!-- ===================================================== -->
-            @if (mobileTab() === 'price-arena') {
-              <div class="clash-arena-screen">
-                <h3 class="brand-font">🔍 Arena Caça-Preços (Comparativo Lojas)</h3>
-                <p class="box-sub">Veja onde cada presente das listas está mais barato agora:</p>
-
-                @for (item of giftService.wishItems(); track item.id) {
-                  <div class="arena-compare-card">
-                    <div class="arena-card-head">
-                      <img [src]="item.imageUrl" [alt]="item.title" class="req-thumb" />
-                      <div>
-                        <strong>{{ item.title }}</strong>
-                        <small>Lista de {{ item.ownerName }} • Economia de {{ item.savingsPercent }}%</small>
-                      </div>
-                    </div>
-                    <div class="arena-offers-mini">
-                      @for (of of item.offers; track of.store) {
-                        <div class="arena-offer-line" [class.winner]="of.isCheapest">
-                          <span>{{ of.storeLogo }} {{ of.store }}</span>
-                          <strong>R$ {{ formatCurrency(of.price) }}</strong>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-
-            <!-- ===================================================== -->
-            <!-- MOBILE TAB 5: TEMAS & PERFIL GAMER                    -->
-            <!-- ===================================================== -->
-            @if (mobileTab() === 'themes') {
-              <div class="clash-themes-screen">
-                <h3 class="brand-font">🎨 Personalizar Tema & Aparência</h3>
-                <p class="box-sub">Troque sua paleta pessoal ou alterne entre Modo Claro e Escuro:</p>
-
-                <button type="button" class="clash-3d-btn purple full-w" (click)="themeService.toggleColorMode()">
-                  {{ themeService.colorMode() === 'light' ? '🌙 Ativar Modo Escuro Gamer' : '☀️ Ativar Modo Claro' }}
-                </button>
-
-                <div class="mobile-theme-list">
-                  @for (t of themeService.themes; track t.id) {
-                    <div
-                      class="mobile-theme-row"
-                      [class.active]="themeService.activeTheme() === t.id"
-                      (click)="themeService.setPersonalTheme(t.id)">
-                      <div class="m-theme-dot" [style.background]="t.primaryHex"></div>
-                      <div class="m-theme-info">
-                        <strong>{{ t.name }} ({{ t.badge }})</strong>
-                        <small>{{ t.description }}</small>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-
-          <!-- BOTTOM DOCK DE 5 ABAS ESTILO CLASH ROYALE -->
-          <nav class="clash-bottom-dock">
-            <button
-              type="button"
-              class="clash-dock-btn"
-              [class.active]="mobileTab() === 'insta-feed'"
-              (click)="setMobileTab('insta-feed')">
-              <span class="dock-icon">📸</span>
-              <span class="dock-label">Feed Insta</span>
-            </button>
-
-            <button
-              type="button"
-              class="clash-dock-btn"
-              [class.active]="mobileTab() === 'clash-deck'"
-              (click)="setMobileTab('clash-deck')">
-              <span class="dock-icon">🃏</span>
-              <span class="dock-label">Meu Deck</span>
-            </button>
-
-            <button
-              type="button"
-              class="clash-dock-btn center-battle-tab"
-              [class.active]="mobileTab() === 'clash-clan'"
-              (click)="setMobileTab('clash-clan')">
-              <span class="dock-icon">🏰</span>
-              <span class="dock-label">Clãs & Baú</span>
-            </button>
-
-            <button
-              type="button"
-              class="clash-dock-btn"
-              [class.active]="mobileTab() === 'price-arena'"
-              (click)="setMobileTab('price-arena')">
-              <span class="dock-icon">🔍</span>
-              <span class="dock-label">Lojas</span>
-            </button>
-
-            <button
-              type="button"
-              class="clash-dock-btn"
-              [class.active]="mobileTab() === 'themes'"
-              (click)="setMobileTab('themes')">
-              <span class="dock-icon">🎨</span>
-              <span class="dock-label">Temas</span>
-            </button>
-          </nav>
-        </div>
+            <span class="story-label">{{ st.userName }}</span>
+          </button>
+        }
       </section>
-    }
 
-    <!-- ========================================================= -->
-    <!-- ABA 1: MINHA LISTA DE DESEJOS & EXTRATOR DE LINKS          -->
-    <!-- ========================================================= -->
-    @if (activeTab() === 'minha-lista') {
-      <section class="link-extractor-card">
-        <div class="extractor-header">
-          <div>
-            <h2 class="brand-font">🔗 Adicionar Presente por Link (Extrator + Comparador de Preços)</h2>
-            <p>Cole o link de qualquer loja (Amazon, Mercado Livre, Magalu, Shopee, KaBuM!) e nós buscamos onde está mais barato.</p>
-          </div>
-          <span class="extractor-badge">OpenGraph + Busca Híbrida</span>
-        </div>
-
-        <div class="quick-samples">
-          <span class="samples-label">Testar com 1 clique:</span>
-          @for (sample of quickSampleLinks; track sample.label) {
-            <button type="button" class="sample-chip" (click)="fillSampleLink(sample)">
-              {{ sample.label }}
-            </button>
+      <!-- FILTRO RÁPIDO DE AMIGOS DO FEED -->
+      <section class="feed-filter-strip">
+        <div class="filter-chips-scroll">
+          <button
+            type="button"
+            class="member-chip"
+            [class.active]="giftService.selectedMemberFilter() === 'all'"
+            (click)="giftService.selectedMemberFilter.set('all')">
+            👥 Todos os Amigos ({{ giftService.wishItems().length - giftService.myWishlist().length }})
+          </button>
+          @for (acc of giftService.accounts(); track acc.id) {
+            @if (acc.id !== giftService.currentUser().id) {
+              <button
+                type="button"
+                class="member-chip"
+                [class.active]="giftService.selectedMemberFilter() === acc.id"
+                (click)="giftService.selectedMemberFilter.set(acc.id)">
+                {{ acc.avatar }} {{ acc.name }}
+              </button>
+            }
           }
         </div>
 
-        <div class="extractor-form">
-          <div class="form-row-main">
-            <input
-              type="url"
-              class="input-field url-input"
-              placeholder="Cole aqui o link do presente (ex: https://www.amazon.com.br/dp/...)"
-              [(ngModel)]="newLinkUrl" />
-
-            <select class="input-field select-priority" [(ngModel)]="newLinkPriority">
-              <option value="alta">🔥 Prioridade Alta</option>
-              <option value="sonho">🌟 Meu Grande Sonho</option>
-              <option value="media">✨ Gostaria de Ganhar</option>
-            </select>
-
-            <button
-              type="button"
-              class="btn-primary extract-btn"
-              [disabled]="!newLinkUrl.trim()"
-              (click)="handleExtractAndAdd()">
-              🔍 Extrair & Comparar Lojas
-            </button>
-          </div>
-
-          <div class="form-row-extra">
-            <input
-              type="text"
-              class="input-field"
-              placeholder="Título opcional (deixe em branco para extrair automaticamente do link)"
-              [(ngModel)]="newLinkCustomTitle" />
-            <input
-              type="text"
-              class="input-field"
-              placeholder="Dica para os amigos: tamanho, cor, voltagem (ex: Tamanho M, 110v, Cor Preta)"
-              [(ngModel)]="newLinkNotes" />
-          </div>
-        </div>
-
-        @if (extractionFeedback()) {
-          <div class="extraction-alert">
-            {{ extractionFeedback() }}
-          </div>
-        }
+        <button type="button" class="btn-switch-account-hint" (click)="openAccountModal('switch')">
+          🔄 Logado como <strong>{{ giftService.currentUser().name }}</strong> (Trocar conta)
+        </button>
       </section>
 
-      <div class="spoiler-banner" [class.showing-secrets]="giftService.perspective() === 'clan_friend'">
-        @if (giftService.perspective() === 'owner') {
-          <div class="spoiler-banner-text">
-            <strong>🛡️ Modo Sem Spoiler Ativo para Você:</strong>
-            Seus amigos e familiares já podem ter reservado itens ou aberto vaquinha na sua lista abaixo, mas tudo está oculto para não estragar sua surpresa!
-          </div>
-          <button type="button" class="btn-outline-sm" (click)="setPerspective('clan_friend')">
-            🕵️ Espiar Visão dos Amigos (Modo Apresentação)
-          </button>
-        } @else {
-          <div class="spoiler-banner-text">
-            <strong>🕵️ Modo Demonstração (Visão dos Amigos do Clã):</strong>
-            Agora você está vendo sua própria lista como seus amigos a enxergam — incluindo quem reservou, a vaquinha secreta e o chat oculto!
-          </div>
-          <button type="button" class="btn-outline-sm" (click)="setPerspective('owner')">
-            🛡️ Voltar para Visão Sem Spoiler
-          </button>
-        }
-      </div>
-
-      <div class="gifts-grid">
-        @for (item of giftService.myWishlist(); track item.id) {
-          <article class="gift-card">
-            <div class="gift-image-wrap">
-              <img [src]="item.imageUrl" [alt]="item.title" class="gift-image" />
-              <span class="priority-badge" [attr.data-priority]="item.priority">
-                {{ item.priority === 'sonho' ? '🌟 Sonho' : item.priority === 'alta' ? '🔥 Alta' : '✨ Desejo' }}
-              </span>
-              <span class="savings-pill">
-                Economize {{ item.savingsPercent }}% (-R$ {{ formatCurrency(item.savingsAmount) }})
-              </span>
-            </div>
-
-            <div class="gift-body">
-              <div class="gift-meta-top">
-                <span class="gift-category">{{ item.category }}</span>
-                <span class="price-history-tag">{{ item.priceHistoryLabel }}</span>
-              </div>
-
-              <h3 class="gift-title brand-font">{{ item.title }}</h3>
-              <p class="gift-notes">💬 <strong>Sua dica:</strong> {{ item.notesFromOwner }}</p>
-
-              <div class="best-price-box">
-                <div>
-                  <span class="best-price-label">🏆 Menor Preço em {{ item.offers[0].store }}</span>
-                  <div class="best-price-values">
-                    <span class="price-current">R$ {{ formatCurrency(item.lowestPrice) }}</span>
-                    <span class="price-old">de R$ {{ formatCurrency(item.highestPrice) }}</span>
-                  </div>
-                  <span class="price-installments">{{ item.offers[0].installments }}</span>
-                </div>
-                <button type="button" class="btn-compare-toggle" (click)="toggleOffers(item.id)">
-                  {{ isOffersExpanded(item.id) ? '▲ Ocultar Lojas' : '📊 Comparar ' + item.offers.length + ' Lojas' }}
-                </button>
-              </div>
-
-              @if (isOffersExpanded(item.id)) {
-                <div class="offers-list">
-                  @for (offer of item.offers; track offer.store) {
-                    <div class="offer-row" [class.cheapest-offer]="offer.isCheapest">
-                      <div class="offer-store">
-                        <span class="store-logo">{{ offer.storeLogo }}</span>
-                        <div>
-                          <strong>{{ offer.store }}</strong>
-                          @if (offer.isCheapest) {
-                            <span class="cheapest-tag">Mais Barato</span>
-                          }
-                          <small class="offer-sub">{{ offer.installments }} • {{ offer.freeShipping ? 'Frete Grátis' : 'Frete a calcular' }}</small>
-                        </div>
-                      </div>
-                      <div class="offer-price-col">
-                        <span class="offer-price">R$ {{ formatCurrency(offer.price) }}</span>
-                        <a [href]="offer.url" target="_blank" rel="noopener" class="offer-link">Ir à loja ↗</a>
-                      </div>
-                    </div>
-                  }
-                </div>
-              }
-
-              @if (giftService.canSeeSecrets(item)) {
-                <div class="secret-zone">
-                  <div class="secret-zone-header">
-                    <span>🤫 Bastidores Secretos do Clã (Invisível para o dono)</span>
-                    <span class="secret-status-badge" [attr.data-status]="item.secretStatus">
-                      {{ item.secretStatus === 'disponivel' ? 'Disponível' : item.secretStatus === 'reservado' ? 'Reservado por ' + item.reservedByName : item.secretStatus === 'vaquinha_ativa' ? 'Vaquinha em Andamento' : '100% Comprado!' }}
-                    </span>
-                  </div>
-
-                  @if (item.secretPool) {
-                    <div class="pool-box">
-                      <div class="pool-progress-labels">
-                        <span>🪙 Vaquinha do Clã: <strong>R$ {{ formatCurrency(item.secretPool.collectedAmount) }}</strong> de R$ {{ formatCurrency(item.secretPool.targetAmount) }}</span>
-                        <strong>{{ getPoolPercentage(item) }}%</strong>
-                      </div>
-                      <div class="pool-bar-bg">
-                        <div class="pool-bar-fill" [style.width.%]="getPoolPercentage(item)"></div>
-                      </div>
-                      <div class="pool-contributors">
-                        @for (c of item.secretPool.contributions; track $index) {
-                          <span class="contributor-chip">{{ c.userAvatar }} {{ c.userName }}: R$ {{ formatCurrency(c.amount) }}</span>
-                        }
-                      </div>
-                    </div>
-                  }
-
-                  @if (item.secretComments.length > 0) {
-                    <div class="secret-comments-box">
-                      @for (comment of item.secretComments; track comment.id) {
-                        <div class="secret-comment-item">
-                          <span class="comment-avatar">{{ comment.authorAvatar }}</span>
-                          <div>
-                            <strong>{{ comment.authorName }}</strong> <small>{{ comment.createdAt }}</small>
-                            <p>{{ comment.text }}</p>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-              } @else {
-                <div class="spoiler-shield-footer">
-                  🛡️ <span>Status de reserva, vaquinha e comentários dos amigos estão ocultos para não estragar sua surpresa.</span>
-                </div>
-              }
-            </div>
-          </article>
-        }
-      </div>
-    }
-
-    <!-- ========================================================= -->
-    <!-- ABA 2: PRESENTEAR AMIGOS & FAMÍLIA (RESERVA E VAQUINHA)    -->
-    <!-- ========================================================= -->
-    @if (activeTab() === 'amigos') {
-      <section class="friends-header-card">
-        <div>
-          <h2 class="brand-font">🕵️ Listas de Desejos dos Amigos & Família</h2>
-          <p>Veja o que seus amigos querem ganhar, compare onde está mais barato, marque reserva secreta ou participe de uma vaquinha sem eles saberem!</p>
-        </div>
-
-        <div class="member-filter-bar">
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="giftService.selectedMemberFilter() === 'all'"
-            (click)="giftService.selectedMemberFilter.set('all')">
-            👥 Todos os Amigos
-          </button>
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="giftService.selectedMemberFilter() === 'u-mae'"
-            (click)="giftService.selectedMemberFilter.set('u-mae')">
-            👩‍🦱 Helena (Mãe)
-          </button>
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="giftService.selectedMemberFilter() === 'u-leticia'"
-            (click)="giftService.selectedMemberFilter.set('u-leticia')">
-            👩‍💻 Letícia Rocha (TCC)
-          </button>
-          <button
-            type="button"
-            class="filter-chip"
-            [class.active]="giftService.selectedMemberFilter() === 'u-lucas'"
-            (click)="giftService.selectedMemberFilter.set('u-lucas')">
-            🧔 Lucas (Irmão)
-          </button>
-        </div>
-      </section>
-
-      <div class="gifts-grid">
+      <!-- GRADE / FEED DE PRESENTES DOS AMIGOS -->
+      <section class="social-feed-grid">
         @for (item of giftService.friendsWishlist(); track item.id) {
-          <article class="gift-card">
-            <div class="gift-image-wrap">
-              <img [src]="item.imageUrl" [alt]="item.title" class="gift-image" />
-              <span class="owner-pill">🎁 Lista de: <strong>{{ item.ownerName }}</strong></span>
-              <span class="savings-pill">
-                -{{ item.savingsPercent }}% (Economize R$ {{ formatCurrency(item.savingsAmount) }})
+          <article class="insta-wish-post" [attr.data-rarity]="item.priority">
+            <!-- Header do Post -->
+            <div class="post-top-bar">
+              <div class="post-author">
+                <span class="author-avatar">{{ item.ownerAvatar || '🎁' }}</span>
+                <div>
+                  <strong>{{ item.ownerName }}</strong>
+                  <small>{{ item.category }} • Menor preço em {{ item.offers[0].store }}</small>
+                </div>
+              </div>
+              <span class="rarity-pill" [attr.data-rarity]="item.priority">
+                {{ getRarityLabel(item.priority) }}
               </span>
             </div>
 
-            <div class="gift-body">
-              <div class="gift-meta-top">
-                <span class="gift-category">{{ item.category }}</span>
-                <span class="price-history-tag">{{ item.priceHistoryLabel }}</span>
+            <!-- Imagem do Produto + Adesivo de Menor Preço -->
+            <div class="post-media-box">
+              <img [src]="item.imageUrl" [alt]="item.title" class="post-img" />
+              <div class="price-floating-badge">
+                <span class="best-store-tag">{{ item.offers[0].storeLogo }} {{ item.offers[0].store }}</span>
+                <strong>R$ {{ formatCurrency(item.lowestPrice) }}</strong>
+                <span class="discount-chip">-{{ item.savingsPercent }}%</span>
+              </div>
+            </div>
+
+            <!-- Corpo do Post -->
+            <div class="post-content">
+              <div class="post-meta-row">
+                <span class="history-label">{{ item.priceHistoryLabel }}</span>
+                <button type="button" class="btn-link-sm" (click)="refreshSingleItemPrices(item.id)">
+                  {{ refreshingItemId() === item.id ? '⏳ Atualizando...' : '🔄 Atualizar Preço Real' }}
+                </button>
               </div>
 
-              <h3 class="gift-title brand-font">{{ item.title }}</h3>
-              <p class="gift-notes">📌 <strong>Preferência de {{ item.ownerName }}:</strong> {{ item.notesFromOwner }}</p>
+              <h3 class="post-title brand-font">{{ item.title }}</h3>
+              <p class="post-owner-note">
+                💬 <strong>Dica de {{ item.ownerName }}:</strong> "{{ item.notesFromOwner }}"
+              </p>
 
-              <div class="best-price-box">
-                <div>
-                  <span class="best-price-label">🏆 Mais barato em {{ item.offers[0].store }}</span>
-                  <div class="best-price-values">
-                    <span class="price-current">R$ {{ formatCurrency(item.lowestPrice) }}</span>
-                    <span class="price-old">de R$ {{ formatCurrency(item.highestPrice) }}</span>
-                  </div>
-                  <span class="price-installments">{{ item.offers[0].installments }}</span>
-                </div>
-                <button type="button" class="btn-compare-toggle" (click)="toggleOffers(item.id)">
-                  {{ isOffersExpanded(item.id) ? '▲ Fechar Comparativo' : '📊 Ver ' + item.offers.length + ' Lojas' }}
+              <!-- Botão de comprar na loja mais barata (com tag de afiliado) + Ver comparativo -->
+              <div class="post-store-bar">
+                <a
+                  [href]="item.offers[0].url || item.originalUrl"
+                  target="_blank"
+                  rel="noopener"
+                  class="clash-3d-btn gold sm">
+                  🛒 Comprar em {{ item.offers[0].store }} (R$ {{ formatCurrency(item.lowestPrice) }}) ↗
+                </a>
+                <button type="button" class="btn-compare-stores" (click)="toggleOffers(item.id)">
+                  {{ isOffersExpanded(item.id) ? '▲ Fechar Lojas' : '📊 Comparar ' + item.offers.length + ' Lojas' }}
                 </button>
               </div>
 
               @if (isOffersExpanded(item.id)) {
-                <div class="offers-list">
-                  @for (offer of item.offers; track offer.store) {
-                    <div class="offer-row" [class.cheapest-offer]="offer.isCheapest">
-                      <div class="offer-store">
-                        <span class="store-logo">{{ offer.storeLogo }}</span>
+                <div class="stores-comparison-table">
+                  @for (of of item.offers; track of.store) {
+                    <div class="store-offer-line" [class.cheapest]="of.isCheapest">
+                      <div class="st-left">
+                        <span class="st-icon">{{ of.storeLogo }}</span>
                         <div>
-                          <strong>{{ offer.store }}</strong>
-                          @if (offer.isCheapest) {
-                            <span class="cheapest-tag">Melhor Preço</span>
+                          <strong>{{ of.store }}</strong>
+                          @if (of.isCheapest) {
+                            <span class="winner-pill">MAIS BARATO</span>
                           }
-                          <small class="offer-sub">{{ offer.installments }}</small>
+                          <small>{{ of.installments }} • {{ of.freeShipping ? 'Frete Grátis' : 'Consultar frete' }}</small>
                         </div>
                       </div>
-                      <div class="offer-price-col">
-                        <span class="offer-price">R$ {{ formatCurrency(offer.price) }}</span>
-                        <a [href]="offer.url" target="_blank" rel="noopener" class="offer-link">Comprar ↗</a>
+                      <div class="st-right">
+                        <strong>R$ {{ formatCurrency(of.price) }}</strong>
+                        <a [href]="of.url" target="_blank" rel="noopener">Ir à loja ↗</a>
                       </div>
                     </div>
                   }
                 </div>
               }
 
-              <div class="secret-zone">
-                <div class="secret-zone-header">
+              <!-- ÁREA DE COORDENAÇÃO SECRETA (VAQUINHA + RESERVA + CHAT) -->
+              <div class="clash-secret-coordination">
+                <div class="secret-head">
                   <span>🤫 Coordenação Secreta ({{ item.ownerName }} não vê isso!)</span>
-                  <span class="secret-status-badge" [attr.data-status]="item.secretStatus">
-                    {{ item.secretStatus === 'disponivel' ? 'Disponível para Presentear' : item.secretStatus === 'reservado' ? 'Reservado por ' + item.reservedByName : item.secretStatus === 'vaquinha_ativa' ? 'Em Vaquinha no Clã' : 'Presente Garantido!' }}
+                  <span class="status-tag" [attr.data-status]="item.secretStatus">
+                    {{ item.secretStatus === 'disponivel' ? 'Disponível' : item.secretStatus === 'reservado' ? 'Reservado por ' + item.reservedByName : item.secretStatus === 'vaquinha_ativa' ? 'Vaquinha Ativa' : '100% Garantido!' }}
                   </span>
                 </div>
 
-                <div class="secret-actions-row">
+                <!-- Barra de Doação estilo Clash Royale -->
+                <div class="clash-donation-progress">
+                  <div class="don-labels">
+                    <span>🪙 Vaquinha do Clã</span>
+                    <strong>R$ {{ formatCurrency(item.secretPool?.collectedAmount ?? 0) }} / R$ {{ formatCurrency(item.lowestPrice) }} ({{ getPoolPercentage(item) }}%)</strong>
+                  </div>
+                  <div class="clash-progress-track">
+                    <div class="clash-progress-fill" [style.width.%]="getPoolPercentage(item)"></div>
+                  </div>
+                </div>
+
+                @if (item.secretPool?.contributions?.length) {
+                  <div class="contributors-row">
+                    @for (c of item.secretPool!.contributions; track $index) {
+                      <span class="contrib-pill">{{ c.userAvatar }} {{ c.userName }}: R$ {{ formatCurrency(c.amount) }}</span>
+                    }
+                  </div>
+                }
+
+                <!-- Botões 3D de Reserva e Doação -->
+                <div class="secret-cta-grid">
                   <button
                     type="button"
-                    class="btn-secret-reserve"
-                    [class.reserved-by-me]="item.reservedByUserId === giftService.currentUser().id"
+                    class="clash-3d-btn purple"
                     (click)="giftService.toggleSecretReservation(item.id)">
                     @if (item.secretStatus === 'reservado' && item.reservedByUserId === giftService.currentUser().id) {
-                      ✅ Reservado por Você (Clique p/ liberar)
+                      ✅ Reservado por Você (Liberar)
                     } @else if (item.secretStatus === 'reservado') {
-                      🔒 Reservado por {{ item.reservedByName }}
+                      🔒 Reservado ({{ item.reservedByName }})
                     } @else {
-                      🤫 Vou Comprar Sozinho (Reservar em Segredo)
+                      🤫 Reservar Sozinho
                     }
+                  </button>
+
+                  <button
+                    type="button"
+                    class="clash-3d-btn green"
+                    (click)="contributePreset(item.id, 50)">
+                    🪙 Doar +R$ 50
                   </button>
                 </div>
 
-                <div class="pool-box">
-                  <div class="pool-progress-labels">
-                    <span>
-                      🪙 <strong>Vaquinha Secreta no Clã:</strong>
-                      R$ {{ formatCurrency(item.secretPool?.collectedAmount ?? 0) }} de R$ {{ formatCurrency(item.lowestPrice) }}
-                    </span>
-                    <strong>{{ getPoolPercentage(item) }}%</strong>
-                  </div>
-                  <div class="pool-bar-bg">
-                    <div class="pool-bar-fill" [style.width.%]="getPoolPercentage(item)"></div>
-                  </div>
-
-                  @if (item.secretPool?.contributions?.length) {
-                    <div class="pool-contributors">
-                      @for (c of item.secretPool!.contributions; track $index) {
-                        <span class="contributor-chip">{{ c.userAvatar }} {{ c.userName }}: R$ {{ formatCurrency(c.amount) }}</span>
-                      }
-                    </div>
-                  }
-
-                  <div class="pool-Quick-Add">
-                    <span>Contribuir sem {{ item.ownerName }} saber:</span>
-                    <div class="pool-btns">
-                      <button type="button" class="chip-btn" (click)="contributePreset(item.id, 50)">+ R$ 50</button>
-                      <button type="button" class="chip-btn" (click)="contributePreset(item.id, 100)">+ R$ 100</button>
-                      <input
-                        type="number"
-                        class="input-mini"
-                        placeholder="Outro R$"
-                        [(ngModel)]="customContributionAmount[item.id]" />
-                      <button type="button" class="chip-btn primary" (click)="contributeCustom(item.id)">Somar</button>
-                    </div>
-                  </div>
+                <div class="custom-donate-row">
+                  <input
+                    type="number"
+                    class="input-dark sm"
+                    placeholder="Outro valor (R$)"
+                    [(ngModel)]="customContributionAmount[item.id]" />
+                  <button type="button" class="btn-mini-action" (click)="contributeCustom(item.id)">
+                    Somar na Vaquinha
+                  </button>
                 </div>
 
-                <div class="secret-comments-box">
-                  <div class="comments-title">💬 Chat Secreto entre Amigos ({{ item.secretComments.length }})</div>
-                  @for (comment of item.secretComments; track comment.id) {
-                    <div class="secret-comment-item">
-                      <span class="comment-avatar">{{ comment.authorAvatar }}</span>
+                <!-- Chat Secreto entre Amigos -->
+                <div class="secret-chat-box">
+                  @for (cm of item.secretComments; track cm.id) {
+                    <div class="chat-msg">
+                      <span class="chat-av">{{ cm.authorAvatar }}</span>
                       <div>
-                        <strong>{{ comment.authorName }}</strong> <small>{{ comment.createdAt }}</small>
-                        <p>{{ comment.text }}</p>
+                        <strong>{{ cm.authorName }}</strong> <small>{{ cm.createdAt }}</small>
+                        <p>{{ cm.text }}</p>
                       </div>
                     </div>
                   }
-                  <div class="comment-input-row">
+                  <div class="chat-input-row">
                     <input
                       type="text"
-                      class="input-field comment-input"
-                      placeholder="Combinar cor, tamanho ou entrega sem o dono ver..."
+                      class="input-dark sm"
+                      placeholder="Combinar presente sem {{ item.ownerName }} saber..."
                       [(ngModel)]="newCommentText[item.id]"
                       (keyup.enter)="sendSecretComment(item.id)" />
-                    <button type="button" class="btn-send-comment" (click)="sendSecretComment(item.id)">Enviar</button>
+                    <button type="button" class="btn-mini-action" (click)="sendSecretComment(item.id)">Enviar</button>
                   </div>
                 </div>
               </div>
             </div>
           </article>
         }
-      </div>
+      </section>
     }
 
-    <!-- ========================================================= -->
-    <!-- ABA 3: SISTEMA DE CLÃS, EVENTOS E AMIGO SECRETO           -->
-    <!-- ========================================================= -->
-    @if (activeTab() === 'clas') {
-      <div class="clans-layout">
-        <aside class="clans-sidebar">
-          <div class="sidebar-header">
-            <h3 class="brand-font">🏰 Seus Clãs</h3>
-            <button type="button" class="btn-new-clan" (click)="showCreateClanModal.set(true)">
-              + Criar Clã
+    <!-- ===================================================================== -->
+    <!-- ABA 2: MEU DECK DE CARTAS (CLASH ROYALE) + FORJADOR COM BUSCA REAL    -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'deck') {
+      <section class="forge-card-panel">
+        <div class="forge-header">
+          <div>
+            <span class="pill-tag">⚡ EXTRATOR DE LINK & BUSCA REAL MERCADO LIVRE</span>
+            <h2 class="brand-font">🃏 Forjar Nova Carta de Presente no Meu Deck</h2>
+            <p>Cole o link de qualquer loja ou digite o nome do produto para buscar preços reais e criar sua carta:</p>
+          </div>
+          <div class="shield-status-chip">
+            🛡️ <strong>Proteção Sem Spoiler Ativa:</strong> Você nunca vê quem reservou seus presentes.
+          </div>
+        </div>
+
+        <!-- Sugestões Rápidas para Busca Real -->
+        <div class="quick-chips-row">
+          <span class="chips-label">Buscar ao vivo com 1 clique:</span>
+          @for (chip of quickSearchChips; track chip) {
+            <button type="button" class="search-chip" (click)="searchForgeCandidates(chip)">
+              🔍 {{ chip }}
             </button>
+          }
+        </div>
+
+        <div class="forge-form-grid">
+          <div class="forge-main-inputs">
+            <input
+              type="text"
+              class="input-dark"
+              placeholder="Cole o link do produto (Amazon, ML, Shopee...) ou digite o nome (ex: AirFryer, PS5, Kindle)"
+              [(ngModel)]="forgeInput"
+              (keyup.enter)="searchForgeCandidates()" />
+
+            <select class="input-dark" [(ngModel)]="forgePriority">
+              <option value="sonho">🌟 Raridade Lendária (Grande Sonho)</option>
+              <option value="alta">🔥 Raridade Épica (Quero Muito)</option>
+              <option value="media">💎 Raridade Rara (Gostaria de Ganhar)</option>
+            </select>
           </div>
 
-          <div class="clan-list">
-            @for (clan of giftService.clans(); track clan.id) {
+          <div class="forge-extra-inputs">
+            <input
+              type="text"
+              class="input-dark"
+              placeholder="Dica para os amigos: tamanho, voltagem, cor (ex: 110v, Tamanho M, Cor Preta)"
+              [(ngModel)]="forgeNotes" />
+
+            <div class="forge-btns">
               <button
                 type="button"
-                class="clan-selector-card"
-                [class.active]="giftService.activeClan().id === clan.id"
-                (click)="selectClan(clan.id)">
-                <div class="clan-crest">{{ clan.crestIcon }}</div>
-                <div class="clan-selector-info">
-                  <strong>{{ clan.name }}</strong>
-                  <span>Nível {{ clan.level }} • {{ clan.members.length }} membros</span>
-                </div>
+                class="clash-3d-btn purple"
+                [disabled]="isSearchingForge() || !forgeInput.trim()"
+                (click)="searchForgeCandidates()">
+                {{ isSearchingForge() ? '⏳ Buscando Ofertas Reais...' : '🔍 Buscar Ofertas Reais' }}
               </button>
-            }
-          </div>
 
-          <div class="clan-theme-toggle-box">
-            <label class="switch-label">
-              <input
-                type="checkbox"
-                [checked]="applyClanThemeAutomatically()"
-                (change)="toggleClanThemeSync()" />
-              <span>🎨 Pintar aplicativo com a cor do Clã ao entrar na sala</span>
-            </label>
-          </div>
-        </aside>
-
-        <section class="clan-detail-panel">
-          @let clan = giftService.activeClan();
-
-          <div class="clan-banner-header">
-            <div class="clan-banner-left">
-              <div class="clan-big-crest">{{ clan.crestIcon }}</div>
-              <div>
-                <div class="clan-badges-row">
-                  <span class="clan-code-badge">Código: {{ clan.inviteCode }}</span>
-                  <span class="clan-lvl-badge">⚔️ Clã Nível {{ clan.level }} ({{ clan.xpProgress }}% XP)</span>
-                </div>
-                <h2 class="brand-font">{{ clan.name }}</h2>
-                <p class="clan-motto">"{{ clan.motto }}"</p>
-              </div>
+              <button
+                type="button"
+                class="clash-3d-btn gold"
+                [disabled]="isSearchingForge() || !forgeInput.trim()"
+                (click)="forgeDirectlyFromInput()">
+                ⚡ Forjar Carta Direto
+              </button>
             </div>
           </div>
+        </div>
 
-          <div class="clan-grid-2col">
-            <div class="clan-box">
-              <h3 class="brand-font">👥 Membros do Clã ({{ clan.members.length }})</h3>
-              <p class="box-sub">Clique em um membro para ver sua lista de desejos e reservas secretas:</p>
-              <div class="clan-members-list">
-                @for (m of clan.members; track m.id) {
-                  <div class="clan-member-row">
-                    <div class="member-left">
-                      <span class="member-avatar">{{ m.avatar }}</span>
-                      <div>
-                        <strong>{{ m.name }}</strong>
-                        <small>{{ m.role }} • 🎂 {{ m.birthday }}</small>
-                      </div>
-                    </div>
-                    <button type="button" class="btn-view-list" (click)="goToMemberWishlist(m.id)">
-                      🎁 Ver Lista ({{ m.wishlistCount }})
+        <!-- RESULTADOS REAIS DA API DO MERCADO LIVRE PARA ESCOLHER -->
+        @if (forgeLiveResults().length > 0) {
+          <div class="live-candidates-box">
+            <div class="candidates-head">
+              <strong>✅ {{ forgeLiveResults().length }} ofertas reais encontradas! Escolha qual adicionar ao seu Deck:</strong>
+              <button type="button" class="btn-link-sm" (click)="forgeLiveResults.set([])">Fechar ✕</button>
+            </div>
+            <div class="candidates-grid">
+              @for (cand of forgeLiveResults(); track cand.id) {
+                <div class="candidate-card">
+                  <img [src]="cand.imageUrl" [alt]="cand.title" class="cand-img" />
+                  <div class="cand-info">
+                    <strong>{{ cand.title }}</strong>
+                    <span class="cand-price">🏆 R$ {{ formatCurrency(cand.lowestPrice) }} ({{ cand.store }})</span>
+                    <small>{{ cand.installmentsText }} • Economia de {{ cand.savingsPercent }}%</small>
+                    <button type="button" class="clash-3d-btn green sm" (click)="pickCandidateToDeck(cand)">
+                      🃏 Escolher Esta Carta
                     </button>
                   </div>
-                }
-              </div>
+                </div>
+              }
             </div>
+          </div>
+        }
+      </section>
 
-            <div class="clan-right-col">
-              <div class="clan-box">
-                <h3 class="brand-font">📅 Mural de Aniversários & Eventos</h3>
-                @if (clan.events.length === 0) {
-                  <p class="box-sub">Nenhum evento próximo cadastrado neste clã.</p>
-                } @else {
-                  <div class="events-list">
-                    @for (ev of clan.events; track ev.id) {
-                      <div class="event-item">
-                        <div class="event-countdown">
-                          <strong>{{ ev.daysRemaining }}</strong>
-                          <span>dias</span>
-                        </div>
-                        <div class="event-info">
-                          <strong>{{ ev.title }}</strong>
-                          <span>{{ ev.dateLabel }}</span>
-                        </div>
-                        @if (ev.honoreeMemberId) {
-                          <button type="button" class="btn-outline-sm" (click)="goToMemberWishlist(ev.honoreeMemberId!)">
-                            Ver Desejos
-                          </button>
-                        }
-                      </div>
-                    }
-                  </div>
-                }
+      <!-- COLEÇÃO DE CARTAS DO USUÁRIO LOGADO -->
+      <section class="my-deck-section">
+        <div class="deck-title-bar">
+          <h3 class="brand-font">
+            🃏 Coleção de {{ giftService.currentUser().name }} ({{ giftService.myWishlist().length }} Cartas)
+          </h3>
+          <span class="deck-sub">Seus amigos nos Clãs veem estas cartas e podem reservar ou abrir vaquinha sem você saber!</span>
+        </div>
+
+        <div class="clash-deck-grid">
+          @for (card of giftService.myWishlist(); track card.id) {
+            <article class="clash-wish-card" [attr.data-rarity]="card.priority">
+              <div class="card-rarity-top">
+                <span>{{ getRarityLabel(card.priority) }}</span>
+                <span class="card-cat">{{ card.category }}</span>
               </div>
 
-              <div class="clan-box secret-santa-box">
-                <div class="santa-header">
+              <div class="card-art-box">
+                <img [src]="card.imageUrl" [alt]="card.title" class="card-art-img" />
+                <span class="elixir-discount-badge">-{{ card.savingsPercent }}% OFF</span>
+              </div>
+
+              <div class="card-body-info">
+                <h4 class="card-title brand-font">{{ card.title }}</h4>
+                <p class="card-notes">📌 {{ card.notesFromOwner }}</p>
+
+                <div class="card-price-panel">
                   <div>
-                    <h3 class="brand-font">🎲 Amigo Secreto Integrado do Clã</h3>
-                    <p class="box-sub">Valor sugerido: <strong>Até R$ {{ formatCurrency(clan.secretSantaBudget) }}</strong></p>
+                    <small>Menor preço em {{ card.offers[0].store }}</small>
+                    <strong class="card-lowest-price">R$ {{ formatCurrency(card.lowestPrice) }}</strong>
+                    <span class="card-old-price">de R$ {{ formatCurrency(card.highestPrice) }}</span>
                   </div>
-                  <button type="button" class="btn-primary" (click)="giftService.drawSecretSanta(clan.id)">
-                    {{ clan.secretSantaDrawn ? '🔄 Sortear Novamente' : '🎲 Realizar Sorteio Agora' }}
+                  <button type="button" class="btn-compare-stores" (click)="toggleOffers(card.id)">
+                    {{ isOffersExpanded(card.id) ? '▲ Lojas' : '📊 ' + card.offers.length + ' Lojas' }}
                   </button>
                 </div>
 
-                @if (clan.secretSantaDrawn) {
-                  @let myTarget = getMySecretSantaTarget();
-                  <div class="santa-reveal-card">
-                    @if (!revealMySecretFriend()) {
-                      <p>🤫 O sorteio deste Clã já foi realizado! Clique abaixo para revelar quem você tirou (sem ninguém ao redor ver):</p>
-                      <button type="button" class="btn-reveal" (click)="revealMySecretFriend.set(true)">
-                        👁️ Revelar Meu Amigo Secreto
-                      </button>
-                    } @else if (myTarget) {
-                      <div class="revealed-target">
-                        <span class="revealed-avatar">{{ myTarget.receiverAvatar }}</span>
-                        <div>
-                          <span class="revealed-label">Você tirou no Amigo Secreto:</span>
-                          <h4 class="brand-font">{{ myTarget.receiverName }}</h4>
+                @if (isOffersExpanded(card.id)) {
+                  <div class="stores-comparison-table">
+                    @for (of of card.offers; track of.store) {
+                      <div class="store-offer-line" [class.cheapest]="of.isCheapest">
+                        <div class="st-left">
+                          <span>{{ of.storeLogo }}</span>
+                          <div>
+                            <strong>{{ of.store }}</strong>
+                            <small>{{ of.installments }}</small>
+                          </div>
                         </div>
-                        <button type="button" class="btn-primary" (click)="goToMemberWishlist(myTarget.receiverId)">
-                          🎁 Ver Lista & Menores Preços
-                        </button>
+                        <div class="st-right">
+                          <strong>R$ {{ formatCurrency(of.price) }}</strong>
+                          <a [href]="of.url" target="_blank" rel="noopener">Ver ↗</a>
+                        </div>
                       </div>
                     }
                   </div>
                 }
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
 
-      @if (showCreateClanModal()) {
-        <div class="modal-backdrop" (click)="showCreateClanModal.set(false)">
-          <div class="modal-card" (click)="$event.stopPropagation()">
-            <h3 class="brand-font">🏰 Criar Novo Clã de Presentes</h3>
-            <p class="box-sub">Crie um grupo para sua família, galera da faculdade, trabalho ou chá de casa nova.</p>
+                <div class="spoiler-shield-bar">
+                  🛡️ <span>Reservas e vaquinhas dos amigos estão ocultas para proteger sua surpresa.</span>
+                </div>
 
-            <div class="modal-form">
-              <label>Nome do Clã</label>
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Ex: Família Silva, Galera do Futebol..."
-                [(ngModel)]="newClanName" />
-
-              <label>Escolha o Brasão do Clã</label>
-              <div class="crest-picker">
-                @for (icon of availableCrests; track icon) {
-                  <button
-                    type="button"
-                    class="crest-option"
-                    [class.selected]="newClanIcon === icon"
-                    (click)="newClanIcon = icon">
-                    {{ icon }}
+                <div class="card-manage-actions">
+                  <button type="button" class="btn-card-act" (click)="refreshSingleItemPrices(card.id)">
+                    {{ refreshingItemId() === card.id ? '⏳...' : '🔄 Atualizar Preço' }}
                   </button>
-                }
+                  <button type="button" class="btn-card-act" (click)="openEditWishModal(card)">
+                    ✏️ Editar
+                  </button>
+                  <button type="button" class="btn-card-act danger" (click)="removeWish(card.id)">
+                    🗑️ Excluir
+                  </button>
+                </div>
               </div>
-
-              <label>Tema Visual Exclusivo do Clã</label>
-              <select class="input-field" [(ngModel)]="newClanTheme">
-                @for (t of themeService.themes; track t.id) {
-                  <option [value]="t.id">{{ t.name }} — {{ t.description }}</option>
-                }
-              </select>
-
-              <label>Lema / Descrição do Clã</label>
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Ex: Ninguém erra o presente neste grupo!"
-                [(ngModel)]="newClanMotto" />
-
-              <div class="modal-actions">
-                <button type="button" class="btn-outline-sm" (click)="showCreateClanModal.set(false)">Cancelar</button>
-                <button type="button" class="btn-primary" (click)="handleCreateClan()">✨ Fundar Clã</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    }
-
-    <!-- ========================================================= -->
-    <!-- ABA 4: IDENTIDADE VISUAL & TEMAS ADAPTÁVEIS                -->
-    <!-- ========================================================= -->
-    @if (activeTab() === 'temas') {
-      <section class="themes-showcase-card">
-        <div class="themes-header">
-          <div>
-            <h2 class="brand-font">🎨 Identidade Visual & Sistema de Temas Adaptáveis</h2>
-            <p>O <strong>SmartGift</strong> possui a paleta principal <strong>Violeta Real</strong> (Roxo/Violeta + Coral + Dourado) e permite que cada usuário ou Clã personalize sua experiência em Modo Claro ou Escuro.</p>
-          </div>
-          <button type="button" class="btn-primary" (click)="themeService.toggleColorMode()">
-            {{ themeService.colorMode() === 'light' ? '🌙 Experimentar Modo Escuro' : '☀️ Experimentar Modo Claro' }}
-          </button>
-        </div>
-
-        <div class="themes-cards-grid">
-          @for (t of themeService.themes; track t.id) {
-            <div
-              class="theme-option-card"
-              [class.active]="themeService.activeTheme() === t.id"
-              (click)="themeService.setPersonalTheme(t.id)">
-              <div class="theme-card-top">
-                <strong class="brand-font">{{ t.name }}</strong>
-                <span class="theme-badge">{{ t.badge }}</span>
-              </div>
-              <p>{{ t.description }}</p>
-              <div class="color-swatches-row">
-                <div class="color-pill" [style.background]="t.primaryHex">{{ t.primaryHex }}</div>
-                <div class="color-pill" [style.background]="t.secondaryHex">{{ t.secondaryHex }}</div>
-                <div class="color-pill" [style.background]="t.accentHex">{{ t.accentHex }}</div>
-              </div>
-              <button type="button" class="btn-apply-theme">
-                {{ themeService.activeTheme() === t.id ? '✅ Tema Pessoal Ativo' : 'Aplicar Tema' }}
-              </button>
-            </div>
+            </article>
           }
         </div>
       </section>
     }
+
+    <!-- ===================================================================== -->
+    <!-- ABA 3: CLÃS, CONVITE #CÓDIGO, MURAL DE VAQUINHA & BAÚ SECRETO         -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'clans') {
+      @let clan = giftService.activeClan();
+
+      <!-- BARRA SUPERIOR DE CLÃS + ENTRAR COM CÓDIGO -->
+      <section class="clans-top-controls">
+        <div class="clan-pills-row">
+          @for (c of giftService.clans(); track c.id) {
+            <button
+              type="button"
+              class="clan-pill-btn"
+              [class.active]="c.id === clan.id"
+              (click)="selectClan(c.id)">
+              <span class="c-icon">{{ c.crestIcon }}</span>
+              <div>
+                <strong>{{ c.name }}</strong>
+                <small>Nv. {{ c.level }} • {{ c.members.length }} membros</small>
+              </div>
+            </button>
+          }
+
+          <button type="button" class="clash-3d-btn purple sm" (click)="showCreateClanModal.set(true)">
+            + Criar Novo Clã
+          </button>
+        </div>
+
+        <!-- Entrar em Clã com Código -->
+        <div class="join-code-bar">
+          <input
+            type="text"
+            class="input-dark sm"
+            placeholder="Código do Clã (ex: #FAMILIA-NASC)"
+            [(ngModel)]="inviteCodeInput"
+            (keyup.enter)="handleJoinClanByCode()" />
+          <button type="button" class="clash-3d-btn gold sm" (click)="handleJoinClanByCode()">
+            ⚔️ Entrar c/ Código
+          </button>
+        </div>
+      </section>
+
+      <div class="clan-dashboard-grid">
+        <!-- COLUNA ESQUERDA: BANNER DO CLÃ + BAÚ LENDÁRIO + MEMBROS -->
+        <div class="clan-left-column">
+          <div class="clan-hero-card">
+            <div class="clan-crest-box">{{ clan.crestIcon }}</div>
+            <div class="clan-hero-info">
+              <div class="clan-tags">
+                <span class="trophy-pill">🏆 {{ clan.level * 210 }} Troféus</span>
+                <button type="button" class="invite-copy-btn" (click)="copyClanInviteCode(clan.inviteCode)">
+                  📋 Código: {{ clan.inviteCode }} (Copiar)
+                </button>
+              </div>
+              <h2 class="brand-font">{{ clan.name }}</h2>
+              <p>"{{ clan.motto }}"</p>
+            </div>
+          </div>
+
+          <!-- BAÚ LENDÁRIO DE AMIGO SECRETO -->
+          <div class="legendary-chest-box" (click)="revealMySecretFriend.set(!revealMySecretFriend())">
+            <div class="chest-visual">{{ revealMySecretFriend() ? '🎉' : '🧰' }}</div>
+            <div class="chest-text">
+              <span class="chest-tag">🎲 BAÚ LENDÁRIO DE AMIGO SECRETO DO CLÃ</span>
+              @if (!clan.secretSantaDrawn) {
+                <strong>Sorteio ainda não realizado neste Clã!</strong>
+                <small>Orçamento sugerido: R$ {{ formatCurrency(clan.secretSantaBudget) }}</small>
+              } @else if (!revealMySecretFriend()) {
+                <strong>Sorteio pronto! Toque no Baú para abrir em segredo</strong>
+                <small>Orçamento: Até R$ {{ formatCurrency(clan.secretSantaBudget) }} • Só você verá seu par</small>
+              } @else {
+                @let pair = getMySecretSantaTarget();
+                @if (pair) {
+                  <strong>Você tirou: {{ pair.receiverAvatar }} {{ pair.receiverName }}!</strong>
+                  <small>Toque para esconder novamente ou veja o Deck de {{ pair.receiverName }}</small>
+                } @else {
+                  <strong>Entre no Clã antes do sorteio para participar!</strong>
+                }
+              }
+            </div>
+            <div class="chest-actions" (click)="$event.stopPropagation()">
+              <button type="button" class="clash-3d-btn gold sm" (click)="giftService.drawSecretSanta(clan.id)">
+                {{ clan.secretSantaDrawn ? '🔄 Sortear de Novo' : '🎲 Sortear Agora' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- MEMBROS DO CLÃ -->
+          <div class="clan-panel-card">
+            <div class="panel-head">
+              <h3 class="brand-font">👥 Membros do Clã ({{ clan.members.length }})</h3>
+            </div>
+            <div class="members-list">
+              @for (m of clan.members; track m.id) {
+                <div class="member-item-row">
+                  <div class="m-left">
+                    <span class="m-av">{{ m.avatar }}</span>
+                    <div>
+                      <strong>{{ m.name }} {{ m.id === giftService.currentUser().id ? '(Você)' : '' }}</strong>
+                      <small>{{ m.role }} • 🎂 {{ m.birthday }}</small>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-compare-stores" (click)="goToMemberWishlist(m.id)">
+                    {{ m.id === giftService.currentUser().id ? '🃏 Meu Deck' : '🎁 Ver Desejos' }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- CALENDÁRIO DE EVENTOS DO CLÃ -->
+          <div class="clan-panel-card">
+            <div class="panel-head">
+              <h3 class="brand-font">📅 Próximos Aniversários & Eventos</h3>
+              <button type="button" class="btn-link-sm" (click)="showNewEventModal.set(true)">+ Adicionar Data</button>
+            </div>
+            <div class="events-stack">
+              @for (ev of clan.events; track ev.id) {
+                <div class="event-row-card">
+                  <div class="days-badge">
+                    <strong>{{ ev.daysRemaining }}</strong>
+                    <span>dias</span>
+                  </div>
+                  <div class="ev-meta">
+                    <strong>{{ ev.title }}</strong>
+                    <small>{{ ev.dateLabel }}</small>
+                  </div>
+                  @if (ev.honoreeMemberId) {
+                    <button type="button" class="btn-compare-stores" (click)="goToMemberWishlist(ev.honoreeMemberId!)">
+                      Presentear
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: MURAL DE DOAÇÃO DE VAQUINHAS (ESTILO CLASH ROYALE) -->
+        <div class="clan-right-column">
+          <div class="clan-panel-card">
+            <div class="panel-head">
+              <div>
+                <span class="pill-tag">⚔️ ESTILO DOAÇÃO DE CARTAS CLASH ROYALE</span>
+                <h3 class="brand-font">🪙 Mural de Vaquinhas Secretas do Clã</h3>
+                <p class="panel-sub">Ajude a completar os presentes dos membros do Clã (100% invisível para o aniversariante!):</p>
+              </div>
+            </div>
+
+            <div class="clan-requests-list">
+              @for (req of giftService.friendsWishlist(); track req.id) {
+                <div class="clash-request-card">
+                  <div class="req-header">
+                    <span>🎁 Presente para <strong>{{ req.ownerName }}</strong></span>
+                    <span class="req-cheapest">{{ req.offers[0].storeLogo }} {{ req.offers[0].store }} • R$ {{ formatCurrency(req.lowestPrice) }}</span>
+                  </div>
+
+                  <div class="req-body">
+                    <img [src]="req.imageUrl" [alt]="req.title" class="req-img" />
+                    <div class="req-progress-area">
+                      <strong>{{ req.title }}</strong>
+                      <div class="clash-progress-track">
+                        <div class="clash-progress-fill" [style.width.%]="getPoolPercentage(req)"></div>
+                      </div>
+                      <div class="req-numbers">
+                        <span>Arrecadado: <strong>R$ {{ formatCurrency(req.secretPool?.collectedAmount ?? 0) }}</strong> de R$ {{ formatCurrency(req.lowestPrice) }}</span>
+                        <strong>{{ getPoolPercentage(req) }}%</strong>
+                      </div>
+                    </div>
+
+                    <button type="button" class="clash-3d-btn green" (click)="contributePreset(req.id, 50)">
+                      DOAR<br><small>+R$ 50</small>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- ABA 4: ARENA CAÇA-PREÇOS EM TEMPO REAL (API MERCADO LIVRE + AFILIADO) -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'arena') {
+      <section class="arena-search-hero">
+        <div>
+          <span class="pill-tag">⚡ CONECTADO À API OFICIAL DO MERCADO LIVRE</span>
+          <h2 class="brand-font">🔍 Arena Caça-Preços em Tempo Real</h2>
+          <p>Pesquise qualquer produto agora mesmo para comparar preços reais entre lojas, já com seu link de afiliado embutido:</p>
+        </div>
+
+        <div class="arena-search-bar">
+          <input
+            type="text"
+            class="input-dark"
+            placeholder="Digite qualquer produto (ex: iPhone 15, AirFryer, Cafeteira Nespresso, PS5...)"
+            [(ngModel)]="arenaQuery"
+            (keyup.enter)="runArenaSearch()" />
+          <button
+            type="button"
+            class="clash-3d-btn green"
+            [disabled]="isSearchingArena()"
+            (click)="runArenaSearch()">
+            {{ isSearchingArena() ? '⏳ Buscando...' : '🔍 Buscar Preços Reais' }}
+          </button>
+        </div>
+
+        <div class="quick-chips-row">
+          @for (chip of quickSearchChips; track chip) {
+            <button type="button" class="search-chip" (click)="runArenaSearch(chip)">
+              ⚡ {{ chip }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="arena-results-grid">
+        @for (res of arenaResults(); track res.id) {
+          <article class="arena-product-card">
+            <div class="arena-top">
+              <img [src]="res.imageUrl" [alt]="res.title" class="arena-img" />
+              <div class="arena-title-col">
+                <span class="arena-cat">{{ res.category }}</span>
+                <h3 class="brand-font">{{ res.title }}</h3>
+                <span class="arena-saving-pill">
+                  🔥 Economia de R$ {{ formatCurrency(res.savingsAmount) }} (-{{ res.savingsPercent }}%)
+                </span>
+              </div>
+            </div>
+
+            <div class="stores-comparison-table">
+              @for (of of res.offers; track of.store) {
+                <div class="store-offer-line" [class.cheapest]="of.isCheapest">
+                  <div class="st-left">
+                    <span class="st-icon">{{ of.storeLogo }}</span>
+                    <div>
+                      <strong>{{ of.store }}</strong>
+                      @if (of.isCheapest) {
+                        <span class="winner-pill">MENOR PREÇO REAL</span>
+                      }
+                      <small>{{ of.installments }} • {{ of.freeShipping ? 'Frete Grátis' : 'Frete normal' }}</small>
+                    </div>
+                  </div>
+                  <div class="st-right">
+                    <strong>R$ {{ formatCurrency(of.price) }}</strong>
+                    <a [href]="of.url" target="_blank" rel="noopener">Comprar c/ Afiliado ↗</a>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="arena-actions">
+              <button type="button" class="clash-3d-btn purple" (click)="addArenaResultToDeck(res)">
+                🃏 Adicionar ao Meu Deck
+              </button>
+              <a [href]="res.permalink" target="_blank" rel="noopener" class="clash-3d-btn gold">
+                🛒 Ir para Oferta Vencedora ↗
+              </a>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+    <!-- ===================================================================== -->
+    <!-- ABA 5: PERFIL, MONETIZAÇÃO DE AFILIADOS, TEMAS & PROTÓTIPOS FIGMA     -->
+    <!-- ===================================================================== -->
+    @if (activeTab() === 'settings') {
+      <div class="settings-grid">
+        <!-- PAINEL 1: PROTÓTIPOS EDITÁVEIS NO FIGMA -->
+        <section class="settings-card figma-highlight-card">
+          <div class="figma-top-row">
+            <div>
+              <span class="pill-tag">🎨 PROTÓTIPOS EM CAMADAS EDITÁVEIS NO FIGMA</span>
+              <h2 class="brand-font">Protótipos de Tela do SmartGift no Figma</h2>
+              <p>
+                Criamos o arquivo oficial no seu time do Figma (<strong>Filipe Nascimento's team</strong>) e as 5 telas em camadas vetoriais editáveis.
+                Clique em <strong>"📋 Copiar Camadas SVG"</strong> em qualquer tela abaixo e aperte <code>Ctrl + V</code> dentro do seu arquivo do Figma para colar todas as camadas editáveis!
+              </p>
+            </div>
+            <a [href]="figmaFileUrl" target="_blank" rel="noopener" class="clash-3d-btn green">
+              📐 Abrir Meu Arquivo no Figma ↗
+            </a>
+          </div>
+
+          <div class="figma-screens-strip">
+            @for (fp of figmaPrototypes; track fp.id) {
+              <div class="figma-proto-item">
+                <div class="fp-head">
+                  <span class="fp-num">TELA {{ fp.number }}</span>
+                  <strong>{{ fp.title }}</strong>
+                  <small>{{ fp.subtitle }}</small>
+                </div>
+                <div class="fp-actions">
+                  <button type="button" class="clash-3d-btn purple sm" (click)="copyFigmaSvgToClipboard(fp)">
+                    📋 Copiar Camadas p/ Colar no Figma (Ctrl+V)
+                  </button>
+                  <a [href]="'/figma-prototypes/' + fp.fileName" [download]="fp.fileName" class="btn-compare-stores">
+                    ⬇ Baixar .SVG
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- PAINEL 2: CONFIGURAÇÃO DE MONETIZAÇÃO (LINKS DE AFILIADO) -->
+        <section class="settings-card">
+          <span class="pill-tag">💰 MONETIZAÇÃO AUTOMÁTICA</span>
+          <h3 class="brand-font">Seus IDs de Afiliado nas Lojas</h3>
+          <p class="panel-sub">
+            Configure abaixo seus códigos de afiliado. Todo clique de compra nas listas e nos Clãs incluirá automaticamente sua tag de comissão:
+          </p>
+
+          <div class="affiliate-form">
+            <label>📦 Amazon Associados (Tag)</label>
+            <input type="text" class="input-dark" [(ngModel)]="affAmazon" placeholder="ex: smartgift-20" />
+
+            <label>🤝 Mercado Livre Afiliados (matt_tool)</label>
+            <input type="text" class="input-dark" [(ngModel)]="affMercadoLivre" placeholder="ex: smartgift_br" />
+
+            <label>🧡 Shopee Affiliates (af_siteid)</label>
+            <input type="text" class="input-dark" [(ngModel)]="affShopee" placeholder="ex: br_smartgift" />
+
+            <label>🛍️ Parceiro Magalu (Loja)</label>
+            <input type="text" class="input-dark" [(ngModel)]="affMagalu" placeholder="ex: parceirosmartgift" />
+
+            <label>💥 KaBuM! / Awin Tag</label>
+            <input type="text" class="input-dark" [(ngModel)]="affKabum" placeholder="ex: smartgift_kabum" />
+
+            <button type="button" class="clash-3d-btn green" (click)="saveAffiliateConfig()">
+              💾 Salvar Tags de Monetização
+            </button>
+          </div>
+        </section>
+
+        <!-- PAINEL 3: TEMAS ADAPTÁVEIS & PERFIL -->
+        <section class="settings-card">
+          <span class="pill-tag">🎨 IDENTIDADE VISUAL & CONTA</span>
+          <h3 class="brand-font">Temas Adaptáveis & Perfil</h3>
+          <p class="panel-sub">Escolha seu tema pessoal ou alterne entre contas para testar a visão de cada membro:</p>
+
+          <div class="themes-list-compact">
+            @for (t of themeService.themes; track t.id) {
+              <div
+                class="theme-row-item"
+                [class.active]="themeService.activeTheme() === t.id"
+                (click)="themeService.setPersonalTheme(t.id)">
+                <div class="theme-swatches">
+                  <span [style.background]="t.primaryHex"></span>
+                  <span [style.background]="t.secondaryHex"></span>
+                  <span [style.background]="t.accentHex"></span>
+                </div>
+                <div>
+                  <strong>{{ t.name }} ({{ t.badge }})</strong>
+                  <small>{{ t.description }}</small>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="profile-settings-actions">
+            <button type="button" class="clash-3d-btn purple" (click)="openAccountModal('edit')">
+              ✏️ Editar Meu Perfil ({{ giftService.currentUser().name }})
+            </button>
+            <button type="button" class="btn-compare-stores" (click)="giftService.resetDemoData()">
+              🔄 Restaurar Dados Iniciais de Fábrica
+            </button>
+          </div>
+        </section>
+      </div>
+    }
   </main>
+
+  <!-- ======================================================================= -->
+  <!-- BOTTOM DOCK FIXO DE 5 ABAS (ESTILO CLASH ROYALE PARA MOBILE)            -->
+  <!-- ======================================================================= -->
+  <nav class="clash-mobile-bottom-dock">
+    <button type="button" class="dock-tab" [class.active]="activeTab() === 'feed'" (click)="setTab('feed')">
+      <span class="d-ico">📸</span>
+      <span class="d-lbl">Feed</span>
+    </button>
+    <button type="button" class="dock-tab" [class.active]="activeTab() === 'deck'" (click)="setTab('deck')">
+      <span class="d-ico">🃏</span>
+      <span class="d-lbl">Meu Deck</span>
+    </button>
+    <button type="button" class="dock-tab center-clan" [class.active]="activeTab() === 'clans'" (click)="setTab('clans')">
+      <span class="d-ico">🏰</span>
+      <span class="d-lbl">Clãs & Baú</span>
+    </button>
+    <button type="button" class="dock-tab" [class.active]="activeTab() === 'arena'" (click)="setTab('arena')">
+      <span class="d-ico">🔍</span>
+      <span class="d-lbl">Preços</span>
+    </button>
+    <button type="button" class="dock-tab" [class.active]="activeTab() === 'settings'" (click)="setTab('settings')">
+      <span class="d-ico">⚙️</span>
+      <span class="d-lbl">Figma/Perfil</span>
+    </button>
+  </nav>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE AUTENTICAÇÃO / TROCA DE CONTA / CADASTRO                       -->
+  <!-- ======================================================================= -->
+  @if (showAuthModal()) {
+    <div class="modal-overlay" (click)="showAuthModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-top">
+          <h3 class="brand-font">🔐 Contas & Autenticação SmartGift</h3>
+          <button type="button" class="story-close-btn" (click)="showAuthModal.set(false)">✕</button>
+        </div>
+
+        <div class="modal-tabs">
+          <button type="button" [class.active]="authModalMode() === 'switch'" (click)="authModalMode.set('switch')">
+            🔄 Trocar Conta Ativa
+          </button>
+          <button type="button" [class.active]="authModalMode() === 'register'" (click)="openAccountModal('register')">
+            ✨ Criar Nova Conta
+          </button>
+          <button type="button" [class.active]="authModalMode() === 'edit'" (click)="openAccountModal('edit')">
+            ✏️ Editar Perfil
+          </button>
+        </div>
+
+        @if (authModalMode() === 'switch') {
+          <p class="panel-sub">
+            Selecione com qual conta deseja usar o app agora. A regra <strong>100% Sem Spoiler</strong> protege automaticamente os presentes da conta ativa:
+          </p>
+          <div class="accounts-switch-list">
+            @for (acc of giftService.accounts(); track acc.id) {
+              <button
+                type="button"
+                class="acc-switch-row"
+                [class.active]="acc.id === giftService.currentUser().id"
+                (click)="switchAccount(acc.id)">
+                <span class="acc-big-av">{{ acc.avatar }}</span>
+                <div class="acc-row-info">
+                  <strong>{{ acc.name }}</strong>
+                  <small>{{ acc.email }} • Nível {{ acc.level }} • 🎂 {{ acc.birthday }}</small>
+                </div>
+                @if (acc.id === giftService.currentUser().id) {
+                  <span class="winner-pill">CONTA ATUAL</span>
+                }
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="modal-form-stack">
+            <label>Seu Nome</label>
+            <input type="text" class="input-dark" [(ngModel)]="regName" placeholder="Ex: Gabriel Silva" />
+
+            <label>Seu E-mail</label>
+            <input type="email" class="input-dark" [(ngModel)]="regEmail" placeholder="Ex: gabriel@email.com" />
+
+            <label>Aniversário (Dia/Mês)</label>
+            <input type="text" class="input-dark" [(ngModel)]="regBirthday" placeholder="Ex: 18 Out" />
+
+            <label>Escolha seu Avatar</label>
+            <div class="icon-picker-row">
+              @for (av of availableAvatars; track av) {
+                <button
+                  type="button"
+                  class="icon-pick-btn"
+                  [class.selected]="regAvatar === av"
+                  (click)="regAvatar = av">
+                  {{ av }}
+                </button>
+              }
+            </div>
+
+            <button type="button" class="clash-3d-btn green" (click)="handleRegisterOrEditAccount()">
+              {{ authModalMode() === 'edit' ? '💾 Salvar Alterações' : '🚀 Criar Conta e Entrar' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE EDIÇÃO DE CARTA DO DECK                                        -->
+  <!-- ======================================================================= -->
+  @if (editingItem()) {
+    <div class="modal-overlay" (click)="editingItem.set(null)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-top">
+          <h3 class="brand-font">✏️ Editar Carta do Meu Deck</h3>
+          <button type="button" class="story-close-btn" (click)="editingItem.set(null)">✕</button>
+        </div>
+        <div class="modal-form-stack">
+          <label>Nome do Presente</label>
+          <input type="text" class="input-dark" [(ngModel)]="editTitle" />
+
+          <label>Raridade / Prioridade</label>
+          <select class="input-dark" [(ngModel)]="editPriority">
+            <option value="sonho">🌟 Lendária (Grande Sonho)</option>
+            <option value="alta">🔥 Épica (Prioridade Alta)</option>
+            <option value="media">💎 Rara (Desejo)</option>
+          </select>
+
+          <label>Dicas para os Amigos (Tamanho, Voltagem, Cor)</label>
+          <input type="text" class="input-dark" [(ngModel)]="editNotes" />
+
+          <button type="button" class="clash-3d-btn green" (click)="saveWishEdits()">
+            💾 Salvar Alterações
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE CRIAÇÃO DE NOVO CLÃ                                            -->
+  <!-- ======================================================================= -->
+  @if (showCreateClanModal()) {
+    <div class="modal-overlay" (click)="showCreateClanModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-top">
+          <h3 class="brand-font">🏰 Fundar Novo Clã</h3>
+          <button type="button" class="story-close-btn" (click)="showCreateClanModal.set(false)">✕</button>
+        </div>
+        <div class="modal-form-stack">
+          <label>Nome do Clã</label>
+          <input type="text" class="input-dark" [(ngModel)]="newClanName" placeholder="Ex: Família Silva, Natal da Firma..." />
+
+          <label>Brasão do Clã</label>
+          <div class="icon-picker-row">
+            @for (ic of availableCrests; track ic) {
+              <button type="button" class="icon-pick-btn" [class.selected]="newClanIcon === ic" (click)="newClanIcon = ic">
+                {{ ic }}
+              </button>
+            }
+          </div>
+
+          <label>Orçamento do Amigo Secreto (R$)</label>
+          <input type="number" class="input-dark" [(ngModel)]="newClanBudget" />
+
+          <label>Tema Visual do Clã</label>
+          <select class="input-dark" [(ngModel)]="newClanTheme">
+            @for (t of themeService.themes; track t.id) {
+              <option [value]="t.id">{{ t.name }} — {{ t.description }}</option>
+            }
+          </select>
+
+          <label>Lema do Clã</label>
+          <input type="text" class="input-dark" [(ngModel)]="newClanMotto" placeholder="Ex: Presentes certeiros e sem spoiler!" />
+
+          <button type="button" class="clash-3d-btn gold" (click)="handleCreateClan()">
+            ✨ Fundar Clã e Gerar Código
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ======================================================================= -->
+  <!-- MODAL DE NOVO EVENTO NO CLÃ                                             -->
+  <!-- ======================================================================= -->
+  @if (showNewEventModal()) {
+    <div class="modal-overlay" (click)="showNewEventModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-top">
+          <h3 class="brand-font">📅 Novo Aniversário ou Evento no Clã</h3>
+          <button type="button" class="story-close-btn" (click)="showNewEventModal.set(false)">✕</button>
+        </div>
+        <div class="modal-form-stack">
+          <label>Título do Evento</label>
+          <input type="text" class="input-dark" [(ngModel)]="newEventTitle" placeholder="Ex: Aniversário do Pai" />
+
+          <label>Data Comemorativa</label>
+          <input type="text" class="input-dark" [(ngModel)]="newEventDateLabel" placeholder="Ex: 15 de Dezembro" />
+
+          <label>Faltam quantos dias?</label>
+          <input type="number" class="input-dark" [(ngModel)]="newEventDays" />
+
+          <button type="button" class="clash-3d-btn green" (click)="handleAddClanEvent()">
+            📅 Salvar no Mural do Clã
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
