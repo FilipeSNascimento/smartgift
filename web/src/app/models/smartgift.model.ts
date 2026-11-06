@@ -2,6 +2,25 @@ import { PersonalThemeId } from '../services/theme.service';
 
 export type StoreName = 'Amazon' | 'Mercado Livre' | 'Magalu' | 'Shopee' | 'KaBuM!';
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  birthday: string;
+  level: number;
+  xp: number;
+  xpNextLevel: number;
+}
+
+export interface AffiliateConfig {
+  amazonTag: string;
+  mercadoLivreMattTool: string;
+  shopeeAffiliateId: string;
+  magaluPartnerId: string;
+  kabumAffiliateTag: string;
+}
+
 export interface StoreOffer {
   store: StoreName;
   storeLogo: string;
@@ -10,8 +29,10 @@ export interface StoreOffer {
   installments: string;
   freeShipping: boolean;
   url: string;
+  affiliateUrl?: string;
   isCheapest?: boolean;
   lastChecked: string;
+  sellerName?: string;
 }
 
 export interface SecretContribution {
@@ -41,6 +62,7 @@ export interface WishItem {
   id: string;
   ownerId: string;
   ownerName: string;
+  ownerAvatar?: string;
   title: string;
   category: string;
   imageUrl: string;
@@ -53,7 +75,7 @@ export interface WishItem {
   savingsPercent: number;
   priceHistoryLabel: string;
   offers: StoreOffer[];
-  // Dados secretos (nunca visíveis para o dono da lista!)
+  // Dados secretos (nunca visíveis para o dono do presente)
   secretStatus: 'disponivel' | 'reservado' | 'vaquinha_ativa' | 'comprado';
   reservedByUserId?: string;
   reservedByName?: string;
@@ -103,4 +125,22 @@ export interface Clan {
   secretSantaBudget: number;
   secretSantaDrawn: boolean;
   secretSantaPairs: SecretSantaPair[];
+}
+
+export interface LiveSearchResult {
+  id: string;
+  title: string;
+  price: number;
+  originalPrice?: number;
+  imageUrl: string;
+  permalink: string;
+  freeShipping: boolean;
+  installmentsText: string;
+  store: StoreName;
+  offers: StoreOffer[];
+  lowestPrice: number;
+  highestPrice: number;
+  savingsAmount: number;
+  savingsPercent: number;
+  category: string;
 }
