@@ -7,7 +7,6 @@
   padding-bottom: 84px;
 }
 
-/* TOAST NOTIFICATION */
 .clash-toast {
   position: fixed;
   bottom: 92px;
@@ -36,9 +35,6 @@
   cursor: pointer;
 }
 
-/* ========================================================================== */
-/* CLASH ROYALE TOP HUD HEADER                                                */
-/* ========================================================================== */
 .clash-hud-header {
   position: sticky;
   top: 0;
@@ -185,7 +181,6 @@
   font-weight: 700;
 }
 
-/* DESKTOP TABS */
 .desktop-nav-tabs {
   max-width: 1280px;
   margin: 0 auto;
@@ -231,9 +226,6 @@
   border-radius: 999px;
 }
 
-/* ========================================================================== */
-/* MAIN CONTAINER & INSTAGRAM STORIES BAR                                     */
-/* ========================================================================== */
 .product-main {
   max-width: 1280px;
   width: 100%;
@@ -314,7 +306,6 @@
   color: var(--text-main);
 }
 
-/* FEED FILTER BAR */
 .feed-filter-strip {
   display: flex;
   justify-content: space-between;
@@ -356,9 +347,6 @@
   cursor: pointer;
 }
 
-/* ========================================================================== */
-/* SOCIAL FEED POSTS (INSTAGRAM + CLASH ROYALE)                               */
-/* ========================================================================== */
 .social-feed-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
@@ -545,7 +533,6 @@
   cursor: pointer;
 }
 
-/* STORES COMPARISON TABLE */
 .stores-comparison-table {
   display: flex;
   flex-direction: column;
@@ -613,7 +600,6 @@
   text-decoration: none;
 }
 
-/* CLASH SECRET COORDINATION ZONE */
 .clash-secret-coordination {
   background: var(--primary-soft);
   border: 1.5px dashed var(--primary-border);
@@ -721,9 +707,6 @@
   margin-left: 4px;
 }
 
-/* ========================================================================== */
-/* 3D CLASH ROYALE BUTTONS & INPUTS                                           */
-/* ========================================================================== */
 .clash-3d-btn {
   border: none;
   border-radius: 12px;
@@ -802,9 +785,6 @@
   white-space: nowrap;
 }
 
-/* ========================================================================== */
-/* TAB 2: FORGE CARD & MY COLLECTIBLE DECK                                    */
-/* ========================================================================== */
 .forge-card-panel,
 .arena-search-hero,
 .settings-card,
@@ -898,7 +878,6 @@
   gap: 8px;
 }
 
-/* LIVE CANDIDATES FROM MERCADO LIVRE API */
 .live-candidates-box {
   margin-top: 16px;
   padding-top: 16px;
@@ -963,7 +942,6 @@
   color: var(--text-muted);
 }
 
-/* CLASH DECK GRID */
 .deck-title-bar {
   margin-bottom: 14px;
 }
@@ -1114,9 +1092,6 @@
   border-color: #FCA5A5;
 }
 
-/* ========================================================================== */
-/* TAB 3: CLANS, INVITE CODE, CHEST & DONATION WALL                           */
-/* ========================================================================== */
 .clans-top-controls {
   display: flex;
   justify-content: space-between;
@@ -1385,9 +1360,6 @@
   color: var(--text-secondary);
 }
 
-/* ========================================================================== */
-/* TAB 4: ARENA CAÇA-PREÇOS AO VIVO                                           */
-/* ========================================================================== */
 .arena-search-bar {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1453,9 +1425,6 @@
   gap: 8px;
 }
 
-/* ========================================================================== */
-/* TAB 5: SETTINGS, AFFILIATES & FIGMA PROTOTYPES                             */
-/* ========================================================================== */
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1587,9 +1556,6 @@
   gap: 8px;
 }
 
-/* ========================================================================== */
-/* MOBILE CLASH ROYALE 5-TAB BOTTOM DOCK & MODALS                             */
-/* ========================================================================== */
 .clash-mobile-bottom-dock {
   position: fixed;
   bottom: 0;
@@ -1635,7 +1601,6 @@
   font-weight: 800;
 }
 
-/* MODALS & STORY VIEWER */
 .modal-overlay,
 .story-modal-backdrop {
   position: fixed;
@@ -1839,6 +1804,194 @@
   line-height: 1.5;
 }
 
+.hud-db-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1.5px solid #334155;
+  color: #E2E8F0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.hud-db-pill.online {
+  border-color: #10B981;
+  background: rgba(6, 78, 59, 0.45);
+}
+
+.db-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.db-header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.db-status-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.db-stat-box {
+  background: var(--bg-app);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.db-stat-box small {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.db-stat-box strong {
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.db-online-text {
+  color: #059669 !important;
+}
+
+.db-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.db-table-card {
+  background: var(--bg-app);
+  border: 1.5px solid var(--border-color);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.db-table-card.anti-spoiler {
+  border-color: rgba(245, 158, 11, 0.65);
+  background: linear-gradient(180deg, var(--bg-app), rgba(245, 158, 11, 0.06));
+}
+
+.db-tb-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-cat-badge {
+  background: var(--primary-soft);
+  color: var(--primary);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.db-cat-badge.spoiler-badge {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.db-row-count {
+  background: #0F172A;
+  color: #FEF08A;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.db-tb-name {
+  font-family: monospace;
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.db-pk-fk {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.db-tb-desc {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.db-rls-pill {
+  margin-top: auto;
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  padding: 7px 9px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.db-rls-pill span {
+  font-weight: 800;
+  color: #059669;
+}
+
+.install-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.install-step-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--bg-app);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.inst-icon {
+  font-size: 1.7rem;
+}
+
+.install-step-item strong {
+  display: block;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.install-step-item p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.modal-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 900px) {
   .social-feed-grid,
   .forge-main-inputs,
@@ -1849,7 +2002,8 @@
     grid-template-columns: 1fr;
   }
 
-  .desktop-nav-tabs {
+  .desktop-nav-tabs,
+  .hud-db-pill {
     display: none;
   }
 }
