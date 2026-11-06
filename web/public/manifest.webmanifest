@@ -1,0 +1,20 @@
+{
+  "name": "SmartGift — Listas de Presentes, Clãs & Menor Preço Sem Spoiler",
+  "short_name": "SmartGift",
+  "description": "Rede social de presentes estilo Clash Royale + Instagram com comparador de preços real, vaquinha secreta e banco relacional Supabase.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090D16",
+  "theme_color": "#1E1B4B",
+  "categories": ["shopping", "social", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/smartgift-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
