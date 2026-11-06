@@ -5,7 +5,18 @@ import { SmartGiftService, ViewPerspective } from './services/smartgift.service'
 import { PersonalThemeId, ThemeService } from './services/theme.service';
 import { WishItem } from './models/smartgift.model';
 
-export type ActiveTab = 'minha-lista' | 'amigos' | 'clas' | 'temas';
+export type ActiveTab = 'minha-lista' | 'amigos' | 'clas' | 'temas' | 'mobile-preview';
+export type MobileClashTab = 'insta-feed' | 'clash-deck' | 'clash-clan' | 'price-arena' | 'themes';
+
+export interface MobileStoryHighlight {
+  id: string;
+  userName: string;
+  avatar: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  actionTab?: MobileClashTab;
+}
 
 @Component({
   selector: 'app-root',
@@ -18,7 +29,9 @@ export class AppComponent {
   readonly giftService = inject(SmartGiftService);
   readonly themeService = inject(ThemeService);
 
-  readonly activeTab = signal<ActiveTab>('minha-lista');
+  readonly activeTab = signal<ActiveTab>('mobile-preview');
+  readonly mobileTab = signal<MobileClashTab>('insta-feed');
+  readonly activeStory = signal<MobileStoryHighlight | null>(null);
   readonly applyClanThemeAutomatically = signal<boolean>(true);
 
   // Form: Adicionar Presente por Link
@@ -40,8 +53,56 @@ export class AppComponent {
   newClanMotto = '';
   newClanTheme: PersonalThemeId = 'violet';
 
-  // Amigo Secreto revelação
+  // Amigo Secreto revelação (Baú Lendário no Mobile / Card na Web)
   revealMySecretFriend = signal<boolean>(false);
+
+  readonly mobileStories: MobileStoryHighlight[] = [
+    {
+      id: 'st-1',
+      userName: 'Letícia (6d)',
+      avatar: '👩‍💻',
+      badge: '🎂 12 Nov',
+      title: 'Aniversário da Letícia em 6 dias!',
+      subtitle: 'O Kindle Paperwhite da lista dela está com 19% OFF na Amazon e a vaquinha do Clã TCC já começou!',
+      actionTab: 'clash-clan'
+    },
+    {
+      id: 'st-2',
+      userName: 'Mãe (Helena)',
+      avatar: '👩‍🦱',
+      badge: '🪙 64%',
+      title: 'Vaquinha Secreta: Cafeteira Nespresso',
+      subtitle: 'Já arrecadamos R$ 250 de R$ 389 no Clã Família Nascimento sem ela desconfiar de nada!',
+      actionTab: 'clash-clan'
+    },
+    {
+      id: 'st-3',
+      userName: 'Lucas',
+      avatar: '🧔',
+      badge: '🔥 Épica',
+      title: 'Lucas forjou uma nova Carta Épica!',
+      subtitle: 'Controle DualSense PS5 Midnight Black com 26% de desconto na KaBuM!',
+      actionTab: 'insta-feed'
+    },
+    {
+      id: 'st-4',
+      userName: 'Bia & Rafa',
+      avatar: '👰',
+      badge: '🥂 24d',
+      title: 'Chá de Casa Nova em 24 dias',
+      subtitle: 'Confira os presentes disponíveis do casal e marque sua reserva secreta.',
+      actionTab: 'clash-clan'
+    },
+    {
+      id: 'st-5',
+      userName: 'Baú Natal',
+      avatar: '🧰',
+      badge: '🎲 Abrir',
+      title: 'Baú Lendário de Amigo Secreto Pronto!',
+      subtitle: 'Toque para ir ao Clã e abrir o seu Baú de Amigo Secreto sem ninguém ver!',
+      actionTab: 'clash-clan'
+    }
+  ];
 
   readonly quickSampleLinks = [
     { label: '⚡ AirFryer Inox 4L', url: 'https://www.amazon.com.br/fritadeira-airfryer-mondial-inox', notes: 'Voltagem 110v, cor Inox' },
@@ -56,9 +117,35 @@ export class AppComponent {
     this.activeTab.set(tab);
     if (tab === 'clas' && this.applyClanThemeAutomatically()) {
       this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
-    } else if (tab !== 'clas') {
+    } else if (tab !== 'clas' && !(tab === 'mobile-preview' && this.mobileTab() === 'clash-clan')) {
       this.themeService.setClanThemeOverride(null);
     }
+  }
+
+  setMobileTab(tab: MobileClashTab): void {
+    this.mobileTab.set(tab);
+    if (tab === 'clash-clan' && this.applyClanThemeAutomatically()) {
+      this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
+    } else {
+      this.themeService.setClanThemeOverride(null);
+    }
+  }
+
+  openStory(story: MobileStoryHighlight): void {
+    this.activeStory.set(story);
+  }
+
+  goToStoryTarget(story: MobileStoryHighlight): void {
+    this.activeStory.set(null);
+    if (story.actionTab) {
+      this.setMobileTab(story.actionTab);
+    }
+  }
+
+  getRarityLabel(priority: 'alta' | 'media' | 'sonho'): string {
+    if (priority === 'sonho') return '🌟 LENDÁRIA';
+    if (priority === 'alta') return '🔥 ÉPICA';
+    return '💎 RARA';
   }
 
   selectClan(clanId: string): void {
@@ -75,7 +162,7 @@ export class AppComponent {
   toggleClanThemeSync(): void {
     const next = !this.applyClanThemeAutomatically();
     this.applyClanThemeAutomatically.set(next);
-    if (next && this.activeTab() === 'clas') {
+    if (next && (this.activeTab() === 'clas' || (this.activeTab() === 'mobile-preview' && this.mobileTab() === 'clash-clan'))) {
       this.themeService.setClanThemeOverride(this.giftService.activeClan().themeId);
     } else {
       this.themeService.setClanThemeOverride(null);
@@ -102,7 +189,7 @@ export class AppComponent {
     );
     this.expandedOffersMap.update(m => ({ ...m, [created.id]: true }));
     this.extractionFeedback.set(
-      `✨ Presente "${created.title}" extraído! Menor preço encontrado: R$ ${this.formatCurrency(created.lowestPrice)} (Economia de R$ ${this.formatCurrency(created.savingsAmount)})`
+      `✨ Carta "${created.title}" forjada! Menor preço: R$ ${this.formatCurrency(created.lowestPrice)} (-R$ ${this.formatCurrency(created.savingsAmount)})`
     );
     this.newLinkUrl = '';
     this.newLinkCustomTitle = '';

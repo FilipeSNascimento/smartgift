@@ -2,7 +2,7 @@
   <!-- TOPBAR FIXA COM SELETOR DE VISÃO (SEM SPOILER) E TEMAS -->
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand-area" (click)="setTab('minha-lista')">
+      <div class="brand-area" (click)="setTab('mobile-preview')">
         <div class="brand-logo">🎁</div>
         <div>
           <div class="brand-title-row">
@@ -72,7 +72,7 @@
             @if (themeService.clanOverrideTheme()) {
               🏰 Tema do Clã Ativo: {{ giftService.activeClan().name }}
             } @else {
-              ✨ Comparador Híbrido & Coordenação Secreta em Clãs
+              ✨ Web em Angular + App Mobile Estilo Clash Royale & Instagram
             }
           </span>
           <h1 class="brand-font">
@@ -117,10 +117,19 @@
       <nav class="main-tabs">
         <button
           type="button"
+          class="tab-btn highlight-mobile-tab"
+          [class.active]="activeTab() === 'mobile-preview'"
+          (click)="setTab('mobile-preview')">
+          📱 App Celular (Clash Royale + Instagram)
+          <span class="tab-count">NOVO</span>
+        </button>
+
+        <button
+          type="button"
           class="tab-btn"
           [class.active]="activeTab() === 'minha-lista'"
           (click)="setTab('minha-lista')">
-          🎁 Minha Lista & Link Inteligente
+          🎁 Minha Lista Web
           <span class="tab-count">{{ giftService.myWishlist().length }}</span>
         </button>
 
@@ -129,7 +138,7 @@
           class="tab-btn"
           [class.active]="activeTab() === 'amigos'"
           (click)="setTab('amigos')">
-          🕵️ Presentear Amigos & Família
+          🕵️ Presentear Amigos
           <span class="tab-count">{{ giftService.friendsWishlist().length }}</span>
         </button>
 
@@ -155,6 +164,443 @@
 
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="main-container">
+
+    <!-- ========================================================================= -->
+    <!-- ABA MOBILE INTERATIVA: EXPERIÊNCIA CLASH ROYALE + INSTAGRAM NO NAVEGADOR  -->
+    <!-- ========================================================================= -->
+    @if (activeTab() === 'mobile-preview') {
+      <section class="mobile-showcase-wrapper">
+        <div class="mobile-explainer">
+          <span class="mobile-tag-pill">📱 Experiência Mobile Flutter (Android & iOS)</span>
+          <h2 class="brand-font">Organização de Telas: Clash Royale + Instagram</h2>
+          <p>
+            Interaja abaixo com o aplicativo mobile! Combinamos os <strong>Stories e Feed Social do Instagram</strong>
+            com o <strong>HUD de Nível/Ouro, Deck de Cartas Lendárias/Épicas, Mural de Doação de Vaquinha no Clã e Baú de Amigo Secreto do Clash Royale</strong>:
+          </p>
+
+          <div class="mobile-feature-pills">
+            <div class="m-pill" (click)="setMobileTab('insta-feed')" [class.active]="mobileTab() === 'insta-feed'">
+              <strong>📸 1. Stories & Feed (Instagram)</strong>
+              <span>Stories de aniversários/vaquinhas no topo + Feed de desejos dos amigos</span>
+            </div>
+            <div class="m-pill" (click)="setMobileTab('clash-deck')" [class.active]="mobileTab() === 'clash-deck'">
+              <strong>🃏 2. Meu Deck de Cartas (Clash Royale)</strong>
+              <span>Seus presentes viram cartas colecionáveis (Lendária, Épica e Rara)</span>
+            </div>
+            <div class="m-pill" (click)="setMobileTab('clash-clan')" [class.active]="mobileTab() === 'clash-clan'">
+              <strong>🏰 3. Clã, Doação & Baú (Clash Royale)</strong>
+              <span>Pedir vaquinha igual pedir cartas no Clã + Baú Mágico de Amigo Secreto</span>
+            </div>
+            <div class="m-pill" (click)="setMobileTab('price-arena')" [class.active]="mobileTab() === 'price-arena'">
+              <strong>🔍 4. Arena Caça-Preços</strong>
+              <span>Comparador instantâneo entre Amazon, ML, Magalu, Shopee e KaBuM!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MOLDURA INTERATIVA DE SMARTPHONE -->
+        <div class="phone-device-frame">
+          <div class="phone-notch"></div>
+
+          <!-- TOP HUD ESTILO CLASH ROYALE -->
+          <div class="clash-top-hud">
+            <div class="clash-level-badge">
+              <span class="crown-icon">👑</span>
+              <div>
+                <strong>Nv. 12</strong>
+                <small>XP 840/1000</small>
+              </div>
+            </div>
+
+            <div class="clash-gold-pill" title="Economia total encontrada pelo comparador">
+              <span>🪙</span>
+              <strong>R$ {{ formatCurrency(giftService.totalSavingsFound()) }}</strong>
+            </div>
+
+            <button
+              type="button"
+              class="clash-shield-btn"
+              [class.spy-mode]="giftService.perspective() === 'clan_friend'"
+              (click)="setPerspective(giftService.perspective() === 'owner' ? 'clan_friend' : 'owner')">
+              {{ giftService.perspective() === 'owner' ? '🛡️ Sem Spoiler' : '🕵️ Espião' }}
+            </button>
+          </div>
+
+          <!-- CORPO DA TELA DO CELULAR -->
+          <div class="phone-screen-body">
+
+            <!-- MODAL DE STORY DO INSTAGRAM QUANDO CLICADO -->
+            @if (activeStory(); as story) {
+              <div class="insta-story-overlay" (click)="activeStory.set(null)">
+                <div class="insta-story-card" (click)="$event.stopPropagation()">
+                  <div class="story-progress-bar"><div class="story-progress-fill"></div></div>
+                  <div class="story-top-user">
+                    <span class="story-big-avatar">{{ story.avatar }}</span>
+                    <div>
+                      <strong>{{ story.userName }}</strong>
+                      <span class="story-badge-pill">{{ story.badge }}</span>
+                    </div>
+                    <button type="button" class="story-close" (click)="activeStory.set(null)">✕</button>
+                  </div>
+                  <div class="story-center-content">
+                    <div class="story-featured-icon">{{ story.avatar }}</div>
+                    <h3 class="brand-font">{{ story.title }}</h3>
+                    <p>{{ story.subtitle }}</p>
+                    <button type="button" class="clash-3d-btn green" (click)="goToStoryTarget(story)">
+                      ⚡ Ir para {{ story.actionTab === 'clash-clan' ? 'Mural do Clã' : 'Presente' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- ===================================================== -->
+            <!-- MOBILE TAB 1: INSTAGRAM STORIES + FEED DE AMIGOS      -->
+            <!-- ===================================================== -->
+            @if (mobileTab() === 'insta-feed') {
+              <!-- CARROSSEL DE STORIES DO INSTAGRAM -->
+              <div class="insta-stories-strip">
+                @for (st of mobileStories; track st.id) {
+                  <button type="button" class="insta-story-item" (click)="openStory(st)">
+                    <div class="insta-ring">
+                      <div class="insta-avatar-inner">{{ st.avatar }}</div>
+                      <span class="insta-mini-badge">{{ st.badge }}</span>
+                    </div>
+                    <span class="insta-story-name">{{ st.userName }}</span>
+                  </button>
+                }
+              </div>
+
+              <!-- FEED VERTICAL ESTILO INSTAGRAM -->
+              <div class="insta-feed-list">
+                @for (item of giftService.friendsWishlist(); track item.id) {
+                  <article class="insta-post-card" [attr.data-rarity]="item.priority">
+                    <div class="insta-post-header">
+                      <div class="insta-post-author">
+                        <span class="insta-author-avatar">🎁</span>
+                        <div>
+                          <strong>{{ item.ownerName }}</strong>
+                          <small>{{ item.category }} • Menor preço em {{ item.offers[0].store }}</small>
+                        </div>
+                      </div>
+                      <span class="clash-rarity-chip" [attr.data-rarity]="item.priority">
+                        {{ getRarityLabel(item.priority) }}
+                      </span>
+                    </div>
+
+                    <div class="insta-post-image-wrap">
+                      <img [src]="item.imageUrl" [alt]="item.title" class="insta-post-img" />
+                      <div class="insta-price-sticker">
+                        🏆 R$ {{ formatCurrency(item.lowestPrice) }}
+                        <span>-{{ item.savingsPercent }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="insta-post-body">
+                      <h4 class="insta-post-title brand-font">{{ item.title }}</h4>
+                      <p class="insta-post-caption">
+                        <strong>{{ item.ownerName }}:</strong> "{{ item.notesFromOwner }}"
+                      </p>
+
+                      <!-- BARRA DE DOAÇÃO ESTILO CLASH ROYALE DENTRO DO POST -->
+                      <div class="clash-donation-box">
+                        <div class="clash-donation-top">
+                          <span>🪙 Vaquinha Secreta do Clã</span>
+                          <strong>R$ {{ formatCurrency(item.secretPool?.collectedAmount ?? 0) }} / R$ {{ formatCurrency(item.lowestPrice) }} ({{ getPoolPercentage(item) }}%)</strong>
+                        </div>
+                        <div class="clash-bar-track">
+                          <div class="clash-bar-fill" [style.width.%]="getPoolPercentage(item)"></div>
+                        </div>
+
+                        <div class="clash-post-actions">
+                          <button
+                            type="button"
+                            class="clash-3d-btn purple"
+                            (click)="giftService.toggleSecretReservation(item.id)">
+                            {{ item.secretStatus === 'reservado' ? '🔒 Reservado' : '🤫 Reservar' }}
+                          </button>
+
+                          <button
+                            type="button"
+                            class="clash-3d-btn green"
+                            (click)="contributePreset(item.id, 50)">
+                            🪙 Doar R$ 50
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+
+            <!-- ===================================================== -->
+            <!-- MOBILE TAB 2: MEU DECK DE CARTAS (CLASH ROYALE)       -->
+            <!-- ===================================================== -->
+            @if (mobileTab() === 'clash-deck') {
+              <div class="clash-deck-container">
+                <div class="clash-deck-header">
+                  <div>
+                    <h3 class="brand-font">🃏 Meu Deck de Desejos ({{ giftService.myWishlist().length }}/8 Cartas)</h3>
+                    <small>Cole o link de um produto para forjar uma nova carta na sua coleção!</small>
+                  </div>
+                </div>
+
+                <!-- FORJADOR RÁPIDO DE CARTA -->
+                <div class="clash-forge-box">
+                  <div class="forge-input-row">
+                    <input
+                      type="url"
+                      class="input-field forge-input"
+                      placeholder="Colar link (Amazon, ML, Shopee...)"
+                      [(ngModel)]="newLinkUrl" />
+                    <button
+                      type="button"
+                      class="clash-3d-btn gold"
+                      (click)="fillSampleLink(quickSampleLinks[0]); handleExtractAndAdd()">
+                      ⚡ Forjar Carta
+                    </button>
+                  </div>
+                </div>
+
+                <!-- GRADE 2x2 DE CARTAS ESTILO CLASH ROYALE -->
+                <div class="clash-cards-grid">
+                  @for (card of giftService.myWishlist(); track card.id) {
+                    <div class="clash-collectible-card" [attr.data-rarity]="card.priority">
+                      <div class="clash-card-rarity-banner">
+                        {{ getRarityLabel(card.priority) }}
+                      </div>
+
+                      <div class="clash-card-art">
+                        <img [src]="card.imageUrl" [alt]="card.title" />
+                        <span class="clash-elixir-badge" title="Economia encontrada">
+                          -{{ card.savingsPercent }}%
+                        </span>
+                      </div>
+
+                      <div class="clash-card-info">
+                        <strong class="clash-card-name">{{ card.title }}</strong>
+                        <div class="clash-card-price">
+                          <span>{{ card.offers[0].storeLogo }} {{ card.offers[0].store }}</span>
+                          <strong>R$ {{ formatCurrency(card.lowestPrice) }}</strong>
+                        </div>
+
+                        <div class="clash-card-status">
+                          @if (giftService.canSeeSecrets(card)) {
+                            <span class="spy-revealed">🕵️ {{ card.secretStatus === 'vaquinha_ativa' ? 'Vaquinha: ' + getPoolPercentage(card) + '%' : card.secretStatus }}</span>
+                          } @else {
+                            <span class="shield-ok">🛡️ Sem Spoiler</span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- ===================================================== -->
+            <!-- MOBILE TAB 3: CLÃ, PEDIDOS DE VAQUINHA E BAÚ SECRETO  -->
+            <!-- ===================================================== -->
+            @if (mobileTab() === 'clash-clan') {
+              @let clan = giftService.activeClan();
+              <div class="clash-clan-screen">
+                <!-- Seletor horizontal de Clãs -->
+                <div class="mobile-clan-pills">
+                  @for (c of giftService.clans(); track c.id) {
+                    <button
+                      type="button"
+                      class="m-clan-chip"
+                      [class.active]="c.id === clan.id"
+                      (click)="selectClan(c.id)">
+                      {{ c.crestIcon }} {{ c.name }}
+                    </button>
+                  }
+                </div>
+
+                <!-- Header do Clã estilo Clash Royale -->
+                <div class="clash-clan-header">
+                  <div class="clash-clan-crest">{{ clan.crestIcon }}</div>
+                  <div class="clash-clan-meta">
+                    <span class="clash-trophy-tag">🏆 {{ clan.level * 210 }} Troféus • {{ clan.inviteCode }}</span>
+                    <h3 class="brand-font">{{ clan.name }}</h3>
+                    <small>{{ clan.motto }}</small>
+                  </div>
+                </div>
+
+                <!-- BAÚ LENDÁRIO DE AMIGO SECRETO -->
+                <div class="clash-chest-card" (click)="revealMySecretFriend.set(!revealMySecretFriend())">
+                  <div class="chest-icon">{{ revealMySecretFriend() ? '🎉' : '🧰' }}</div>
+                  <div class="chest-info">
+                    <span class="chest-label">BAÚ LENDÁRIO DE AMIGO SECRETO</span>
+                    @if (!clan.secretSantaDrawn) {
+                      <strong>Sorteio pendente neste Clã!</strong>
+                      <small>Toque para sortear agora</small>
+                    } @else if (!revealMySecretFriend()) {
+                      <strong>Toque no Baú para abrir em segredo!</strong>
+                      <small>Orçamento: Até R$ {{ formatCurrency(clan.secretSantaBudget) }}</small>
+                    } @else {
+                      @let target = getMySecretSantaTarget();
+                      <strong>Você tirou: {{ target?.receiverAvatar }} {{ target?.receiverName }}!</strong>
+                      <small>Toque novamente para esconder</small>
+                    }
+                  </div>
+                  @if (!clan.secretSantaDrawn) {
+                    <button
+                      type="button"
+                      class="clash-3d-btn gold"
+                      (click)="$event.stopPropagation(); giftService.drawSecretSanta(clan.id)">
+                      Sortear 🎲
+                    </button>
+                  }
+                </div>
+
+                <!-- MURAL DE PEDIDOS DE VAQUINHA NO CLÃ (IGUAL DOAR CARTAS NO CLASH ROYALE) -->
+                <div class="clash-chat-section-title">
+                  ⚔️ Pedidos de Vaquinha no Chat do Clã (Sem Spoiler p/ o Dono)
+                </div>
+
+                <div class="clash-clan-requests">
+                  @for (reqItem of giftService.friendsWishlist(); track reqItem.id) {
+                    <div class="clash-request-bubble">
+                      <div class="req-top">
+                        <span class="req-requester">🎁 Presente para <strong>{{ reqItem.ownerName }}</strong></span>
+                        <span class="req-store-tag">{{ reqItem.offers[0].storeLogo }} {{ reqItem.offers[0].store }}</span>
+                      </div>
+                      <div class="req-main-row">
+                        <img [src]="reqItem.imageUrl" [alt]="reqItem.title" class="req-thumb" />
+                        <div class="req-progress-col">
+                          <strong class="req-item-title">{{ reqItem.title }}</strong>
+                          <div class="clash-bar-track">
+                            <div class="clash-bar-fill" [style.width.%]="getPoolPercentage(reqItem)"></div>
+                          </div>
+                          <small>
+                            R$ {{ formatCurrency(reqItem.secretPool?.collectedAmount ?? 0) }} / R$ {{ formatCurrency(reqItem.lowestPrice) }} ({{ getPoolPercentage(reqItem) }}%)
+                          </small>
+                        </div>
+                        <button
+                          type="button"
+                          class="clash-3d-btn green"
+                          (click)="contributePreset(reqItem.id, 50)">
+                          DOAR<br><small>+R$ 50</small>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- ===================================================== -->
+            <!-- MOBILE TAB 4: ARENA CAÇA-PREÇOS (COMPARADOR)          -->
+            <!-- ===================================================== -->
+            @if (mobileTab() === 'price-arena') {
+              <div class="clash-arena-screen">
+                <h3 class="brand-font">🔍 Arena Caça-Preços (Comparativo Lojas)</h3>
+                <p class="box-sub">Veja onde cada presente das listas está mais barato agora:</p>
+
+                @for (item of giftService.wishItems(); track item.id) {
+                  <div class="arena-compare-card">
+                    <div class="arena-card-head">
+                      <img [src]="item.imageUrl" [alt]="item.title" class="req-thumb" />
+                      <div>
+                        <strong>{{ item.title }}</strong>
+                        <small>Lista de {{ item.ownerName }} • Economia de {{ item.savingsPercent }}%</small>
+                      </div>
+                    </div>
+                    <div class="arena-offers-mini">
+                      @for (of of item.offers; track of.store) {
+                        <div class="arena-offer-line" [class.winner]="of.isCheapest">
+                          <span>{{ of.storeLogo }} {{ of.store }}</span>
+                          <strong>R$ {{ formatCurrency(of.price) }}</strong>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- ===================================================== -->
+            <!-- MOBILE TAB 5: TEMAS & PERFIL GAMER                    -->
+            <!-- ===================================================== -->
+            @if (mobileTab() === 'themes') {
+              <div class="clash-themes-screen">
+                <h3 class="brand-font">🎨 Personalizar Tema & Aparência</h3>
+                <p class="box-sub">Troque sua paleta pessoal ou alterne entre Modo Claro e Escuro:</p>
+
+                <button type="button" class="clash-3d-btn purple full-w" (click)="themeService.toggleColorMode()">
+                  {{ themeService.colorMode() === 'light' ? '🌙 Ativar Modo Escuro Gamer' : '☀️ Ativar Modo Claro' }}
+                </button>
+
+                <div class="mobile-theme-list">
+                  @for (t of themeService.themes; track t.id) {
+                    <div
+                      class="mobile-theme-row"
+                      [class.active]="themeService.activeTheme() === t.id"
+                      (click)="themeService.setPersonalTheme(t.id)">
+                      <div class="m-theme-dot" [style.background]="t.primaryHex"></div>
+                      <div class="m-theme-info">
+                        <strong>{{ t.name }} ({{ t.badge }})</strong>
+                        <small>{{ t.description }}</small>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- BOTTOM DOCK DE 5 ABAS ESTILO CLASH ROYALE -->
+          <nav class="clash-bottom-dock">
+            <button
+              type="button"
+              class="clash-dock-btn"
+              [class.active]="mobileTab() === 'insta-feed'"
+              (click)="setMobileTab('insta-feed')">
+              <span class="dock-icon">📸</span>
+              <span class="dock-label">Feed Insta</span>
+            </button>
+
+            <button
+              type="button"
+              class="clash-dock-btn"
+              [class.active]="mobileTab() === 'clash-deck'"
+              (click)="setMobileTab('clash-deck')">
+              <span class="dock-icon">🃏</span>
+              <span class="dock-label">Meu Deck</span>
+            </button>
+
+            <button
+              type="button"
+              class="clash-dock-btn center-battle-tab"
+              [class.active]="mobileTab() === 'clash-clan'"
+              (click)="setMobileTab('clash-clan')">
+              <span class="dock-icon">🏰</span>
+              <span class="dock-label">Clãs & Baú</span>
+            </button>
+
+            <button
+              type="button"
+              class="clash-dock-btn"
+              [class.active]="mobileTab() === 'price-arena'"
+              (click)="setMobileTab('price-arena')">
+              <span class="dock-icon">🔍</span>
+              <span class="dock-label">Lojas</span>
+            </button>
+
+            <button
+              type="button"
+              class="clash-dock-btn"
+              [class.active]="mobileTab() === 'themes'"
+              (click)="setMobileTab('themes')">
+              <span class="dock-icon">🎨</span>
+              <span class="dock-label">Temas</span>
+            </button>
+          </nav>
+        </div>
+      </section>
+    }
 
     <!-- ========================================================= -->
     <!-- ABA 1: MINHA LISTA DE DESEJOS & EXTRATOR DE LINKS          -->
