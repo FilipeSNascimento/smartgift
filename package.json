@@ -1,0 +1,11 @@
+{
+  "name": "smartgift-monorepo",
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "start": "npm --workspace=web run start",
+    "build": "npm --workspace=web run build"
+  }
+}
