@@ -1,0 +1,176 @@
+<svg width="393" height="852" viewBox="0 0 393 852" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hudGrad" x1="0" y1="0" x2="0" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="legendaryBorder" x1="0" y1="0" x2="170" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="btnGold" x1="0" y1="0" x2="0" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <g id="03-Tela-Meu-Deck-Forjar-Carta">
+    <rect id="Screen-Bg" width="393" height="852" rx="36" fill="#0F172A"/>
+
+    <!-- LAYER: Clash Royale Top HUD -->
+    <g id="Clash-Top-HUD">
+      <rect width="393" height="86" fill="url(#hudGrad)"/>
+      <line x1="0" y1="86" x2="393" y2="86" stroke="#334155" stroke-width="2"/>
+      <g id="HUD-Level" transform="translate(16, 34)">
+        <rect width="98" height="38" rx="10" fill="#090D16" stroke="#38BDF8" stroke-width="1.5"/>
+        <text x="12" y="25" font-size="16">👑</text>
+        <text x="34" y="18" fill="#38BDF8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800">Nv. 12</text>
+        <text x="34" y="31" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="600">Deck 4/8</text>
+      </g>
+      <g id="HUD-Savings" transform="translate(124, 36)">
+        <rect width="142" height="34" rx="17" fill="#090D16" stroke="#F59E0B" stroke-width="1.5"/>
+        <text x="14" y="22" font-size="14">🪙</text>
+        <text x="34" y="22" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="800">R$ 1.211,30</text>
+      </g>
+      <g id="HUD-Shield" transform="translate(276, 36)">
+        <rect width="101" height="34" rx="10" fill="#064E3B" stroke="#10B981" stroke-width="1.5"/>
+        <text x="50" y="21" text-anchor="middle" fill="#6EE7B7" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="800">🛡️ Sem Spoiler</text>
+      </g>
+    </g>
+
+    <!-- LAYER: Forge New Wish Card Box (Real Link + Price Search) -->
+    <g id="Forge-New-Card-Panel" transform="translate(16, 102)">
+      <rect width="361" height="148" rx="20" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="16" y="26" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800">⚡ Forjar Nova Carta de Presente (Busca Real)</text>
+      <text x="16" y="43" fill="#CBD5E1" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="500">Cole o link da loja ou digite o produto para comparar preços reais:</text>
+
+      <!-- Input URL / Search -->
+      <g id="Forge-Input-Field" transform="translate(16, 54)">
+        <rect width="329" height="40" rx="10" fill="#0F172A" stroke="#475569" stroke-width="1.5"/>
+        <text x="12" y="24" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11">https://www.mercadolivre.com.br/airfryer-mondial...</text>
+      </g>
+
+      <!-- Priority Selector + Forge CTA -->
+      <g id="Forge-Actions-Row" transform="translate(16, 102)">
+        <rect width="136" height="34" rx="9" fill="#0F172A" stroke="#A855F7" stroke-width="1.5"/>
+        <text x="68" y="21" text-anchor="middle" fill="#E9D5FF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="800">🌟 Raridade: Lendária</text>
+
+        <rect x="148" y="3" width="181" height="34" rx="9" fill="#92400E"/>
+        <rect x="148" y="0" width="181" height="34" rx="9" fill="url(#btnGold)"/>
+        <text x="238" y="21" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="900">🔍 BUSCAR &amp; FORJAR CARTA</text>
+      </g>
+    </g>
+
+    <!-- LAYER: Deck Section Header -->
+    <g id="Deck-Section-Header" transform="translate(18, 266)">
+      <text x="0" y="14" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="14" font-weight="800">🃏 Meu Deck Colecionável (4 Cartas)</text>
+      <text x="357" y="14" text-anchor="end" fill="#38BDF8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="700">🔄 Atualizar Preços</text>
+    </g>
+
+    <!-- LAYER: 2x2 Grid of Collectible Wish Cards -->
+    <!-- Card 1: Legendary -->
+    <g id="Deck-Card-1-Legendary" transform="translate(16, 290)">
+      <rect width="174" height="226" rx="18" fill="#1E293B" stroke="url(#legendaryBorder)" stroke-width="3"/>
+      <rect x="3" y="3" width="168" height="22" rx="14" fill="#090D16"/>
+      <text x="87" y="18" text-anchor="middle" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">🌟 CARTA LENDÁRIA</text>
+
+      <rect x="10" y="30" width="154" height="92" rx="12" fill="#0F172A"/>
+      <text x="87" y="86" text-anchor="middle" font-size="36">🎧</text>
+
+      <!-- Elixir Discount Drop -->
+      <rect x="16" y="36" width="52" height="20" rx="10" fill="#EC4899" stroke="#FFFFFF" stroke-width="1.5"/>
+      <text x="42" y="49" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">-21% OFF</text>
+
+      <text x="12" y="140" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800">Sony WH-1000XM5</text>
+      <text x="12" y="156" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="600">🤝 Mercado Livre (4 lojas)</text>
+      <text x="12" y="176" fill="#34D399" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="900">R$ 1.899,90</text>
+
+      <rect x="12" y="188" width="114" height="26" rx="8" fill="#0F172A"/>
+      <text x="69" y="205" text-anchor="middle" fill="#6EE7B7" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700">🛡️ Sem Spoiler</text>
+      <rect x="132" y="188" width="30" height="26" rx="8" fill="#334155"/>
+      <text x="147" y="205" text-anchor="middle" font-size="11">✏️</text>
+    </g>
+
+    <!-- Card 2: Epic -->
+    <g id="Deck-Card-2-Epic" transform="translate(203, 290)">
+      <rect width="174" height="226" rx="18" fill="#1E293B" stroke="#A855F7" stroke-width="2.5"/>
+      <rect x="3" y="3" width="168" height="22" rx="14" fill="#090D16"/>
+      <text x="87" y="18" text-anchor="middle" fill="#E9D5FF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">🔥 CARTA ÉPICA</text>
+
+      <rect x="10" y="30" width="154" height="92" rx="12" fill="#0F172A"/>
+      <text x="87" y="86" text-anchor="middle" font-size="36">⌨️</text>
+
+      <rect x="16" y="36" width="52" height="20" rx="10" fill="#9333EA" stroke="#FFFFFF" stroke-width="1.5"/>
+      <text x="42" y="49" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">-24% OFF</text>
+
+      <text x="12" y="140" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800">Logitech MX Mechanical</text>
+      <text x="12" y="156" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="600">💥 KaBuM! (3 lojas)</text>
+      <text x="12" y="176" fill="#34D399" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="900">R$ 679,90</text>
+
+      <rect x="12" y="188" width="114" height="26" rx="8" fill="#0F172A"/>
+      <text x="69" y="205" text-anchor="middle" fill="#6EE7B7" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700">🛡️ Sem Spoiler</text>
+      <rect x="132" y="188" width="30" height="26" rx="8" fill="#334155"/>
+      <text x="147" y="205" text-anchor="middle" font-size="11">✏️</text>
+    </g>
+
+    <!-- Card 3: Rare -->
+    <g id="Deck-Card-3-Rare" transform="translate(16, 530)">
+      <rect width="174" height="226" rx="18" fill="#1E293B" stroke="#38BDF8" stroke-width="2.5"/>
+      <rect x="3" y="3" width="168" height="22" rx="14" fill="#090D16"/>
+      <text x="87" y="18" text-anchor="middle" fill="#7DD3FC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">💎 CARTA RARA</text>
+
+      <rect x="10" y="30" width="154" height="92" rx="12" fill="#0F172A"/>
+      <text x="87" y="86" text-anchor="middle" font-size="36">📘</text>
+
+      <rect x="16" y="36" width="52" height="20" rx="10" fill="#0284C7" stroke="#FFFFFF" stroke-width="1.5"/>
+      <text x="42" y="49" text-anchor="middle" fill="#FFFFFF" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="900">-34% OFF</text>
+
+      <text x="12" y="140" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800">Livro Arquitetura Limpa</text>
+      <text x="12" y="156" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="600">📦 Amazon Prime</text>
+      <text x="12" y="176" fill="#34D399" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="900">R$ 64,90</text>
+
+      <rect x="12" y="188" width="114" height="26" rx="8" fill="#0F172A"/>
+      <text x="69" y="205" text-anchor="middle" fill="#6EE7B7" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700">🛡️ Sem Spoiler</text>
+      <rect x="132" y="188" width="30" height="26" rx="8" fill="#334155"/>
+      <text x="147" y="205" text-anchor="middle" font-size="11">✏️</text>
+    </g>
+
+    <!-- Card 4: Empty Slot to Add -->
+    <g id="Deck-Card-4-Add-Slot" transform="translate(203, 530)">
+      <rect width="174" height="226" rx="18" fill="#131C31" stroke="#475569" stroke-width="2" stroke-dasharray="6 6"/>
+      <circle cx="87" cy="96" r="28" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="87" y="105" text-anchor="middle" fill="#FEF08A" font-size="26" font-weight="800">+</text>
+      <text x="87" y="146" text-anchor="middle" fill="#F8FAFC" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="800">Slot de Carta Livre</text>
+      <text x="87" y="164" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10">Cole um link ou busque</text>
+      <text x="87" y="178" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10">no Mercado Livre</text>
+    </g>
+
+    <!-- LAYER: Clash Royale 5-Tab Bottom Dock -->
+    <g id="Clash-Bottom-Dock" transform="translate(0, 774)">
+      <rect width="393" height="78" fill="#090D16"/>
+      <line x1="0" y1="0" x2="393" y2="0" stroke="#334155" stroke-width="2"/>
+      <g id="Tab-1-Feed" transform="translate(10, 8)">
+        <text x="35" y="28" text-anchor="middle" font-size="18">📸</text>
+        <text x="35" y="46" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Feed</text>
+      </g>
+      <g id="Tab-2-Deck-Active" transform="translate(86, 8)">
+        <rect width="70" height="56" rx="14" fill="#7C3AED" fill-opacity="0.32" stroke="#A78BFA" stroke-width="1.5"/>
+        <text x="35" y="28" text-anchor="middle" font-size="18">🃏</text>
+        <text x="35" y="46" text-anchor="middle" fill="#FEF08A" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="800">Meu Deck</text>
+      </g>
+      <g id="Tab-3-Clans" transform="translate(161, 8)">
+        <text x="35" y="28" text-anchor="middle" font-size="18">🏰</text>
+        <text x="35" y="46" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Clãs &amp; Baú</text>
+      </g>
+      <g id="Tab-4-Arena" transform="translate(237, 8)">
+        <text x="35" y="28" text-anchor="middle" font-size="18">🔍</text>
+        <text x="35" y="46" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Lojas</text>
+      </g>
+      <g id="Tab-5-Profile" transform="translate(313, 8)">
+        <text x="35" y="28" text-anchor="middle" font-size="18">⚙️</text>
+        <text x="35" y="46" text-anchor="middle" fill="#94A3B8" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700">Perfil</text>
+      </g>
+    </g>
+  </g>
+</svg>

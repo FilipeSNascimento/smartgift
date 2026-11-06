@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844" fill="none">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0" y1="0" x2="390" y2="844" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D101B" />
+      <stop offset="100%" stop-color="#141829" />
+    </linearGradient>
+    <linearGradient id="storyGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#EC4899" />
+      <stop offset="100%" stop-color="#8B5CF6" />
+    </linearGradient>
+    <linearGradient id="goldBtn2" x1="0" y1="0" x2="350" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
+
+  <g id="Frame: 02 - Feed Social e Stories (Instagram + Clash)">
+    <rect id="Background" width="390" height="844" rx="40" fill="url(#bgGrad2)" />
+
+    <!-- Top HUD Clash Royale -->
+    <g id="Top HUD Clash Royale">
+      <rect id="HUD Bar" x="16" y="44" width="358" height="54" rx="18" fill="#171C2E" stroke="#2D3555" stroke-width="1.5" />
+      <rect id="Crown Level Badge" x="28" y="54" width="66" height="34" rx="10" fill="#252B45" stroke="#F59E0B" stroke-width="1.5" />
+      <text id="Crown Text" x="40" y="76" fill="#FDE68A" font-family="Inter, sans-serif" font-size="13" font-weight="800">👑 Nv.12</text>
+
+      <rect id="Savings Pill" x="104" y="54" width="144" height="34" rx="10" fill="#132A22" stroke="#10B981" stroke-width="1.2" />
+      <text id="Savings Value" x="116" y="75" fill="#34D399" font-family="Inter, sans-serif" font-size="12" font-weight="800">🪙 R$ 1.840 econ.</text>
+
+      <rect id="Shield Anti-Spoiler" x="258" y="54" width="104" height="34" rx="10" fill="#231D3C" stroke="#8B5CF6" stroke-width="1.2" />
+      <text id="Shield Label" x="270" y="75" fill="#C4B5FD" font-family="Inter, sans-serif" font-size="11" font-weight="800">🛡️ Sem Spoiler</text>
+    </g>
+
+    <!-- Carrossel de Stories Estilo Instagram -->
+    <g id="Carrossel Stories Instagram">
+      <text id="Section Stories Title" x="20" y="122" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="700">STORIES DOS CLÃS • AO VIVO</text>
+
+      <!-- Story 1 -->
+      <g id="Story 1 - Ana">
+        <circle cx="52" cy="166" r="31" stroke="url(#storyGrad)" stroke-width="3" fill="#171C2E" />
+        <text x="41" y="174" font-size="22">👩‍🎨</text>
+        <rect x="28" y="186" width="48" height="16" rx="8" fill="#EC4899" />
+        <text x="35" y="197" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="9" font-weight="800">NIVER</text>
+        <text x="31" y="216" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="11" font-weight="600">Ana C.</text>
+      </g>
+
+      <!-- Story 2 -->
+      <g id="Story 2 - Lucas">
+        <circle cx="132" cy="166" r="31" stroke="url(#storyGrad)" stroke-width="3" fill="#171C2E" />
+        <text x="121" y="174" font-size="22">🧔‍♂️</text>
+        <rect x="104" y="186" width="56" height="16" rx="8" fill="#F59E0B" />
+        <text x="110" y="197" fill="#0F172A" font-family="Inter, sans-serif" font-size="9" font-weight="800">84% VAQ</text>
+        <text x="110" y="216" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="11" font-weight="600">Lucas M.</text>
+      </g>
+
+      <!-- Story 3 -->
+      <g id="Story 3 - Marina">
+        <circle cx="212" cy="166" r="31" stroke="url(#storyGrad)" stroke-width="3" fill="#171C2E" />
+        <text x="201" y="174" font-size="22">👩‍💻</text>
+        <rect x="184" y="186" width="56" height="16" rx="8" fill="#10B981" />
+        <text x="190" y="197" fill="#052E16" font-family="Inter, sans-serif" font-size="9" font-weight="800">-22% OFF</text>
+        <text x="190" y="216" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="11" font-weight="600">Marina</text>
+      </g>
+
+      <!-- Story 4 -->
+      <g id="Story 4 - Novo Story">
+        <circle cx="292" cy="166" r="31" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" fill="#171C2E" />
+        <text x="283" y="174" fill="#94A3B8" font-family="Inter, sans-serif" font-size="22" font-weight="700">+</text>
+        <text x="268" y="216" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="600">Forjar</text>
+      </g>
+    </g>
+
+    <!-- Card Principal do Feed Social -->
+    <g id="Post Card - Presente de Amigo">
+      <rect id="Card Container" x="16" y="234" width="358" height="504" rx="26" fill="#171C2E" stroke="#F59E0B" stroke-width="2" />
+
+      <!-- Post Header -->
+      <g id="Post Header">
+        <circle cx="46" cy="266" r="18" fill="#252B45" />
+        <text x="37" y="272" font-size="16">👩‍🎨</text>
+        <text id="Post Author" x="72" y="262" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="14" font-weight="800">Ana Clara • Clã Família</text>
+        <text id="Post Subtitle" x="72" y="279" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11">Menor preço encontrado no Mercado Livre</text>
+        <rect id="Rarity Tag" x="278" y="250" width="82" height="26" rx="8" fill="#451A03" stroke="#F59E0B" />
+        <text x="290" y="267" fill="#FDE68A" font-family="Inter, sans-serif" font-size="10" font-weight="800">★ LENDÁRIA</text>
+      </g>
+
+      <!-- Post Media Banner -->
+      <g id="Product Image Area">
+        <rect x="30" y="296" width="330" height="178" rx="18" fill="#0F1322" />
+        <text x="168" y="395" font-size="54">🎧</text>
+        <rect id="Discount Badge" x="42" y="308" width="168" height="28" rx="9" fill="#064E3B" stroke="#10B981" />
+        <text x="52" y="326" fill="#6EE7B7" font-family="Inter, sans-serif" font-size="11" font-weight="800">🔥 -19% OFF (R$ 420 econ.)</text>
+        <rect id="Store Pill" x="234" y="308" width="114" height="28" rx="9" fill="#1E293B" />
+        <text x="246" y="326" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="11" font-weight="700">🤝 Mercado Livre</text>
+      </g>
+
+      <!-- Post Title & Price -->
+      <g id="Product Info">
+        <text id="Product Name" x="30" y="500" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="16" font-weight="800">Fone Sony WH-1000XM5 Noise Cancelling</text>
+        <text id="Old Price" x="30" y="522" fill="#64748B" font-family="Inter, sans-serif" font-size="12">De R$ 2.499,00 em 5 lojas</text>
+        <text id="Best Price" x="234" y="524" fill="#34D399" font-family="Inter, sans-serif" font-size="20" font-weight="900">R$ 2.079,00</text>
+      </g>
+
+      <!-- Barra de Vaquinha Secreta (Oculta p/ Ana, Visível p/ Amigos) -->
+      <g id="Secret Crowdfunding Box">
+        <rect x="30" y="538" width="330" height="76" rx="16" fill="#1E1B36" stroke="#7C3AED" stroke-width="1.2" />
+        <text x="44" y="560" fill="#DDD6FE" font-family="Inter, sans-serif" font-size="11" font-weight="800">🤫 VAQUINHA SECRETA (OCULTA PARA ANA CLARA)</text>
+        <text x="44" y="578" fill="#A78BFA" font-family="Inter, sans-serif" font-size="12" font-weight="700">R$ 1.550 de R$ 2.079 (75%)</text>
+        <rect x="44" y="588" width="302" height="12" rx="6" fill="#0F172A" />
+        <rect x="44" y="588" width="226" height="12" rx="6" fill="url(#storyGrad)" />
+      </g>
+
+      <!-- Action Buttons -->
+      <g id="Action Buttons">
+        <rect id="Btn Affiliate Buy" x="30" y="628" width="198" height="44" rx="12" fill="url(#goldBtn2)" />
+        <text x="48" y="655" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="900">🛒 Comprar c/ Desconto</text>
+
+        <rect id="Btn Reserve Secret" x="238" y="628" width="122" height="44" rx="12" fill="#252B45" stroke="#475569" />
+        <text x="252" y="655" fill="#F8FAFC" font-family="Inter, sans-serif" font-size="12" font-weight="800">🎁 Somar R$</text>
+      </g>
+
+      <text id="Comments Preview" x="30" y="704" fill="#94A3B8" font-family="Inter, sans-serif" font-size="12">💬 Lucas: "Já garanti R$ 300 na vaquinha secreta!"</text>
+    </g>
+
+    <!-- Bottom Dock Clash Royale 5 Abas -->
+    <g id="Bottom Navigation Dock">
+      <rect x="16" y="756" width="358" height="68" rx="22" fill="#111524" stroke="#2D3555" stroke-width="1.5" />
+      <rect id="Active Tab Highlight" x="24" y="764" width="66" height="52" rx="14" fill="#252B45" stroke="#F59E0B" />
+      <text x="41" y="788" font-size="18">📸</text>
+      <text x="43" y="806" fill="#FDE68A" font-family="Inter, sans-serif" font-size="10" font-weight="800">Feed</text>
+
+      <text x="112" y="788" font-size="18">🃏</text>
+      <text x="104" y="806" fill="#94A3B8" font-family="Inter, sans-serif" font-size="10" font-weight="700">Meu Deck</text>
+
+      <circle cx="195" cy="782" r="24" fill="url(#goldBtn2)" />
+      <text x="185" y="790" font-size="20">🏰</text>
+
+      <text x="262" y="788" font-size="18">⚖️</text>
+      <text x="256" y="806" fill="#94A3B8" font-family="Inter, sans-serif" font-size="10" font-weight="700">Preços</text>
+
+      <text x="328" y="788" font-size="18">🎨</text>
+      <text x="322" y="806" fill="#94A3B8" font-family="Inter, sans-serif" font-size="10" font-weight="700">Figma</text>
+    </g>
+  </g>
+</svg>

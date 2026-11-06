@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartGift — Protótipos Editáveis para Figma</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090D16;
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 32px 24px 64px;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 32px;
+      background: linear-gradient(135deg, #312E81 0%, #1E1B4B 100%);
+      border: 1.5px solid #6366F1;
+      border-radius: 24px;
+      padding: 28px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .header h1 { font-size: 1.65rem; font-weight: 900; color: #FEF08A; margin-bottom: 6px; }
+    .header p { font-size: 0.95rem; color: #E2E8F0; max-width: 760px; line-height: 1.5; }
+    .figma-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(180deg, #34D399 0%, #10B981 100%);
+      box-shadow: 0 4px 0 #047857;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-weight: 800;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+    }
+    .steps-bar {
+      max-width: 1400px;
+      margin: 0 auto 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .step-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 16px 20px;
+    }
+    .step-card strong { color: #FEF08A; display: block; margin-bottom: 4px; font-size: 0.92rem; }
+    .step-card span { color: #CBD5E1; font-size: 0.83rem; }
+    .screens-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(393px, 1fr));
+      gap: 28px;
+      justify-items: center;
+    }
+    .screen-col {
+      background: #131C31;
+      border: 1.5px solid #334155;
+      border-radius: 28px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .screen-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .screen-top h3 { font-size: 0.98rem; color: #F8FAFC; }
+    .copy-btn {
+      background: #7C3AED;
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .copy-btn:hover { background: #6D28D9; }
+    object {
+      width: 393px;
+      height: 852px;
+      border-radius: 36px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>🎨 SmartGift — Protótipos em Camadas Editáveis para o Figma</h1>
+      <p>
+        Todas as 5 telas abaixo foram construídas em <strong>SVG Vetorial Estruturado</strong> com grupos nomeados (<code>#Clash-Top-HUD</code>, <code>#Instagram-Stories-Carousel</code>, <code>#Deck-Card-1-Legendary</code>, etc.).
+        Para editar qualquer tela no seu arquivo do Figma, basta arrastar os arquivos <code>.svg</code> da pasta <code>figma-prototypes/</code> para dentro do Figma!
+      </p>
+    </div>
+    <a class="figma-btn" href="https://www.figma.com/design/NMXEihmjSrwSjZKxoPCzyR" target="_blank" rel="noopener">
+      📐 Abrir Arquivo Criado no Seu Figma ↗
+    </a>
+  </div>
+
+  <div class="steps-bar">
+    <div class="step-card">
+      <strong>1. Abra o arquivo criado no seu Figma</strong>
+      <span>Clique no botão verde acima para abrir <em>SmartGift — Protótipos Mobile & Web</em> no seu time do Figma.</span>
+    </div>
+    <div class="step-card">
+      <strong>2. Arraste os 5 arquivos .svg ou copie</strong>
+      <span>Arraste os arquivos da pasta <code>figma-prototypes/</code> direto para o canvas do Figma (ou clique em "Baixar SVG").</span>
+    </div>
+    <div class="step-card">
+      <strong>3. Edite 100% das camadas livremente</strong>
+      <span>Cada texto, card de raridade, botão 3D, barra de vaquinha e ícone vira uma camada nativa editável no Figma.</span>
+    </div>
+  </div>
+
+  <div class="screens-grid">
+    <div class="screen-col">
+      <div class="screen-top">
+        <h3>01. Login, Convite de Clã & Multicontas</h3>
+        <a class="copy-btn" href="./01-login-onboarding.svg" download>⬇ Baixar SVG</a>
+      </div>
+      <object data="./01-login-onboarding.svg" type="image/svg+xml"></object>
+    </div>
+
+    <div class="screen-col">
+      <div class="screen-top">
+        <h3>02. Feed Social & Stories (Instagram)</h3>
+        <a class="copy-btn" href="./02-feed-instagram-stories.svg" download>⬇ Baixar SVG</a>
+      </div>
+      <object data="./02-feed-instagram-stories.svg" type="image/svg+xml"></object>
+    </div>
+
+    <div class="screen-col">
+      <div class="screen-top">
+        <h3>03. Meu Deck & Forjar Carta (Clash)</h3>
+        <a class="copy-btn" href="./03-meu-deck-forjar-carta.svg" download>⬇ Baixar SVG</a>
+      </div>
+      <object data="./03-meu-deck-forjar-carta.svg" type="image/svg+xml"></object>
+    </div>
+
+    <div class="screen-col">
+      <div class="screen-top">
+        <h3>04. Clã, Mural de Vaquinha & Baú Secreto</h3>
+        <a class="copy-btn" href="./04-cla-vaquinha-bau-secreto.svg" download>⬇ Baixar SVG</a>
+      </div>
+      <object data="./04-cla-vaquinha-bau-secreto.svg" type="image/svg+xml"></object>
+    </div>
+
+    <div class="screen-col">
+      <div class="screen-top">
+        <h3>05. Arena Caça-Preços & Afiliados</h3>
+        <a class="copy-btn" href="./05-arena-precos-afiliados.svg" download>⬇ Baixar SVG</a>
+      </div>
+      <object data="./05-arena-precos-afiliados.svg" type="image/svg+xml"></object>
+    </div>
+  </div>
+</body>
+</html>
